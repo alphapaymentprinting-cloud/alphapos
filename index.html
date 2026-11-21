@@ -979,19 +979,28 @@
       }
 
       filtered.forEach(t => {
+        const fotoIcon = t.foto ? `<span class="ml-1 text-emerald-400" title="Ada Lampiran Foto"><i class="fas fa-image"></i></span>` : '';
         tbody.innerHTML += `
           <tr class="hover:bg-slate-900/60 transition">
-            <td class="py-3 px-3 text-center"><input type="checkbox" class="trx-checkbox rounded bg-slate-900 border-slate-700" value="${t.id}"></td>
-            <td class="py-3 px-3"><div class="font-bold text-white">${t.timestamp}</div><div class="text-[10px] text-slate-500">${t.id}</div></td>
-            <td class="py-3 px-3"><span class="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-slate-800 text-orange-400">${t.kategori}</span></td>
-            <td class="py-3 px-3 font-medium text-white">${t.detail} <span class="text-slate-500 block text-[10px]">${t.pelanggan}</span></td>
-            <td class="py-3 px-3 text-center">${t.qty}</td>
-            <td class="py-3 px-3 text-right font-bold text-white">${formatRupiah(t.jual)}</td>
-            <td class="py-3 px-3 text-right font-bold text-emerald-400">${formatRupiah(t.untung)}</td>
-            <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-lg text-[10px] font-bold ${t.status === 'Lunas' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">${t.status}</span></td>
-            <td class="py-3 px-3 text-center flex items-center justify-center gap-1">
-              <button onclick="bukaStrukTransaksi('${t.id}')" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl" title="Cetak/Bagikan Struk"><i class="fas fa-print"></i></button>
-              <button onclick="hapusTransaksi('${t.id}')" class="p-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-xl" title="Hapus"><i class="fas fa-trash"></i></button>
+            <td class="py-3 px-3 text-center align-middle"><input type="checkbox" class="trx-checkbox rounded bg-slate-900 border-slate-700 w-4 h-4 text-orange-500 focus:ring-0 cursor-pointer"></td>
+            <td class="py-3 px-3 align-middle"><div class="font-bold text-white">${t.timestamp}</div><div class="text-[10px] text-slate-500">${t.id}</div></td>
+            <td class="py-3 px-3 align-middle"><span class="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-slate-800 text-orange-400 inline-block">${t.kategori}</span></td>
+            <td class="py-3 px-3 align-middle font-medium text-white">${t.detail} ${fotoIcon} <span class="text-slate-500 block text-[10px]">${t.pelanggan}</span></td>
+            <td class="py-3 px-3 text-center align-middle">${t.qty}</td>
+            <td class="py-3 px-3 text-right align-middle font-bold text-white">${formatRupiah(t.jual)}</td>
+            <td class="py-3 px-3 text-right align-middle font-bold text-emerald-400">${formatRupiah(t.untung)}</td>
+            <td class="py-3 px-3 text-center align-middle"><span class="px-2.5 py-1 rounded-lg text-[10px] font-bold ${t.status === 'Lunas' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'} inline-block">${t.status}</span></td>
+            
+            <!-- Kolom Aksi dengan Posisi Presisi & Rapi -->
+            <td class="py-3 px-3 text-center align-middle">
+              <div class="inline-flex items-center justify-center gap-1.5">
+                <button onclick="bukaStrukTransaksi('${t.id}')" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition shadow-sm" title="Cetak/Bagikan Struk">
+                  <i class="fas fa-print text-xs"></i>
+                </button>
+                <button onclick="hapusTransaksi('${t.id}')" class="w-8 h-8 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 flex items-center justify-center transition shadow-sm" title="Hapus">
+                  <i class="fas fa-trash-alt text-xs"></i>
+                </button>
+              </div>
             </td>
           </tr>
         `;
@@ -1069,14 +1078,14 @@
     }
 
     function downloadTemplateImport() {
-      // Header disamakan persis dengan urutan kolom di sheet Google Sheets Anda
-      let csvContent = "ID,Timestamp,Kategori,Detail,Qty,Modal,Jual,Untung,Status,Pelanggan\n";
+      // Header disamakan persis dengan format file template resmi Alpha POS.xlsx Anda
+      let csvContent = "ID Transaksi,Timestamp,Kategori,Detail Barang/Layanan,Qty,Harga Modal,Harga Jual,Keuntungan,Status Bayar,Nama Pelanggan\n";
       
-      // Baris contoh agar mudah dipahami saat diisi
+      // Baris contoh data agar mudah dipahami saat diisi
       csvContent += "TRX-261122001,2026-11-22 08:30,Fisik,Kabel Data Type-C (1x),1,15000,30000,15000,Lunas,Umum\n";
       csvContent += "TRX-261122002,2026-11-22 09:15,Pulsa & Data,Telkomsel 10rb (081234567890),1,10200,12000,1800,Lunas,Budi\n";
 
-      // Menggunakan penanda BOM UTF-8 agar rapi saat dibuka di Excel/WPS
+      // Menggunakan penanda BOM UTF-8 agar rapi dan tidak berantakan saat dibuka di Excel/WPS
       const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
