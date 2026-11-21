@@ -1105,21 +1105,18 @@
     }
 
     // 2. Fungsi Import File EXCEL (.xlsx / .xls / .csv)
-    function importDataExcel(event) {
+    async function importDataExcel(event) {
       const file = event.target.files[0];
       if (!file) return;
       
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = async function(e) {
         try {
           const data = new Uint8Array(e.target.result);
           const workbook = XLSX.read(data, { type: 'array' });
           
-          // Ambil sheet pertama
           const firstSheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[firstSheetName];
-          
-          // Ubah sheet menjadi format JSON (array of arrays)
           const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
           
           if (rows.length <= 1) {
@@ -1128,17 +1125,17 @@
           }
           
           let importedCount = 0;
-          // Mulai dari baris ke-1 (indeks 1, melewati header di indeks 0)
+          showLoading(true, 'Mengimport & Menyinkronkan ke Google Sheets...');
+
           for (let i = 1; i < rows.length; i++) {
             const cols = rows[i];
             if (!cols || cols.length === 0 || !cols[0]) continue;
             
             const modal = Number(cols[5]) || 0;
             const jual = Number(cols[6]) || 0;
-            // Jika kolom Keuntungan (indeks 7) kosong atau berupa rumus Excel, hitung otomatis
             const untung = (cols[7] !== '' && !isNaN(cols[7])) ? Number(cols[7]) : (jual - modal);
 
-            appData.transaksi.unshift({
+            const trxBaru = {
               id: String(cols[0] || 'TRX-' + Date.now() + i),
               timestamp: String(cols[1] || new Date().toISOString().slice(0, 10) + ' ' + new Date().toTimeString().slice(0, 5)),
               kategori: String(cols[2] || 'Fisik'),
@@ -1149,19 +1146,37 @@
               untung: untung,
               status: String(cols[8] || 'Lunas'),
               pelanggan: String(cols[9] || 'Umum')
-            });
+            };
+
+            appData.transaksi.unshift(trxBaru);
             importedCount++;
+
+            // Kirim ke Google Sheets via GAS_API_URL
+            if (GAS_API_URL) {
+              try {
+                await fetch(GAS_API_URL, {
+                  method: 'POST',
+                  mode: 'no-cors',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(trxBaru)
+                });
+              } catch (err) {
+                console.error("Gagal kirim ke Google Sheets:", err);
+              }
+            }
           }
 
           calculateDashboardMetrics(); 
           saveData(); 
           renderAllViews();
+          showLoading(false);
           
           event.target.value = '';
-          alert(`Berhasil mengimport ${importedCount} data transaksi dari Excel ke Riwayat Transaksi!`);
+          alert(`Berhasil mengimport dan menyinkronkan ${importedCount} data ke Google Sheets!`);
         } catch (err) {
+          showLoading(false);
           console.error(err);
-          alert('Terjadi kesalahan saat membaca file Excel. Pastikan format file benar.');
+          alert('Terjadi kesalahan saat membaca file Excel.');
         }
       };
       
@@ -1346,6 +1361,18 @@
         appData.kasbon.unshift({ id: 'KSB-' + Date.now().toString().slice(-6), tanggal: now.toISOString().slice(0, 10), pelanggan, noHp: '-', hutang: grandTotal, status: 'Belum Lunas' });
       }
 
+      // Kirim ke Google Sheets
+      if (GAS_API_URL) {
+        try {
+          await fetch(GAS_API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newTrx)
+          });
+        } catch (err) { console.error(err); }
+      }
+
       cart = []; document.getElementById('cart-pelanggan').value = ''; document.getElementById('cart-uang-bayar').value = '';
       renderCart(); calculateDashboardMetrics(); saveData(); renderAllViews();
       bukaStrukTransaksi(newTrxId);
@@ -1468,6 +1495,18 @@
       appData.transaksi.unshift(masterTrx);
       if (statusBayar === 'Kasbon') {
         appData.kasbon.unshift({ id: 'KSB-' + Date.now().toString().slice(-6), tanggal: now.toISOString().slice(0, 10), pelanggan, noHp: '-', hutang: grandJual, status: 'Belum Lunas' });
+      }
+
+      // Kirim ke Google Sheets
+      if (GAS_API_URL) {
+        try {
+          await fetch(GAS_API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(masterTrx)
+          });
+        } catch (err) { console.error(err); }
       }
 
       document.getElementById('dig-pelanggan').value = ''; document.getElementById('dig-uang-bayar').value = '';
