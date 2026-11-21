@@ -1001,8 +1001,29 @@
 
     async function hapusTransaksi(id) {
       if (!confirm('Hapus transaksi ini?')) return;
+      
+      // Hapus dari array lokal
       appData.transaksi = appData.transaksi.filter(t => t.id !== id);
-      calculateDashboardMetrics(); saveData(); renderAllViews();
+      calculateDashboardMetrics(); 
+      saveData(); 
+      renderAllViews();
+
+      // Jika terhubung ke Google Sheets, kirim perintah hapus ke GAS
+      if (GAS_API_URL) {
+        try {
+          showLoading(true, 'Menghapus di Google Sheets...');
+          await fetch(GAS_API_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Menghindari masalah CORS pada Google Apps Script
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'hapus', id: id })
+          });
+          showLoading(false);
+        } catch (err) {
+          showLoading(false);
+          console.error('Gagal sinkronisasi hapus ke Sheets:', err);
+        }
+      }
     }
 
     async function hapusTransaksiMasal() {
@@ -1011,22 +1032,32 @@
       if (!confirm(`Hapus ${checked.length} transaksi terpilih?`)) return;
 
       const idsToRemove = Array.from(checked).map(cb => cb.value);
+      
+      // Hapus dari lokal
       appData.transaksi = appData.transaksi.filter(t => !idsToRemove.includes(t.id));
-      calculateDashboardMetrics(); saveData(); renderAllViews();
+      calculateDashboardMetrics(); 
+      saveData(); 
+      renderAllViews();
       alert('Transaksi terpilih berhasil dihapus!');
-    }
 
-    function exportDataExcel() {
-      let csv = 'ID,Timestamp,Kategori,Detail,Qty,Modal,Jual,Untung,Status,Pelanggan\n';
-      appData.transaksi.forEach(t => {
-        csv += `"${t.id}","${t.timestamp}","${t.kategori}","${t.detail}",${t.qty},${t.modal},${t.jual},${t.untung},"${t.status}","${t.pelanggan}"\n`;
-      });
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Riwayat-Transaksi-${new Date().toISOString().slice(0, 10)}.csv`;
-      a.click();
+      // Jika terhubung ke Google Sheets, kirim perintah hapus massal
+      if (GAS_API_URL) {
+        try {
+          showLoading(true, 'Menghapus data di Google Sheets...');
+          for (let id of idsToRemove) {
+            await fetch(GAS_API_URL, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'hapus', id: id })
+            });
+          }
+          showLoading(false);
+        } catch (err) {
+          showLoading(false);
+          console.error('Gagal sinkronisasi hapus massal ke Sheets:', err);
+        }
+      }
     }
 
     function importDataExcel(event) {
