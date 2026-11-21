@@ -1094,19 +1094,57 @@
     }
 
     function exportDataExcel() {
-      // Menggunakan titik koma (;) sebagai pemisah kolom agar otomatis terpisah di Excel wilayah Indonesia
-      let csv = 'ID;Timestamp;Kategori;Detail;Qty;Modal;Jual;Untung;Status;Pelanggan\n';
+      // Pastikan data yang tampil di tabel ikut terambil (baik dari lokal maupun Google Sheets)
+      const dataExport = appData.transaksi || [];
       
-      appData.transaksi.forEach(t => {
-        csv += `"${t.id}","${t.timestamp}","${t.kategori}","${t.detail}",${t.qty},${t.modal},${t.jual},${t.untung},"${t.status}","${t.pelanggan}"\n`;
+      if (dataExport.length === 0) {
+        alert('Data riwayat transaksi masih kosong! Pastikan data sudah muncul di tabel sebelum melakukan Export.');
+        return;
+      }
+
+      // Header disamakan persis dengan sheet Transaksi di Google Sheets Anda
+      const headers = ['ID', 'Timestamp', 'Kategori', 'Detail', 'Qty', 'Modal', 'Jual', 'Untung', 'Status', 'Pelanggan'];
+      
+      let tableHtml = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head><meta charset="UTF-8"></head>
+        <body>
+          <table border="1">
+            <thead>
+              <tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>
+            </thead>
+            <tbody>
+      `;
+
+      dataExport.forEach(t => {
+        tableHtml += `
+          <tr>
+            <td>${t.id || ''}</td>
+            <td>${t.timestamp || ''}</td>
+            <td>${t.kategori || ''}</td>
+            <td>${t.detail || ''}</td>
+            <td>${t.qty || 0}</td>
+            <td>${t.modal || 0}</td>
+            <td>${t.jual || 0}</td>
+            <td>${t.untung || 0}</td>
+            <td>${t.status || ''}</td>
+            <td>${t.pelanggan || ''}</td>
+          </tr>
+        `;
       });
 
-      // Menambahkan penanda BOM (\uFEFF) dan mengubah koma menjadi titik koma (;)
-      const blob = new Blob(["\uFEFF" + csv.replace(/,/g, ';')], { type: 'text/csv;charset=utf-8;' });
+      tableHtml += `
+            </tbody>
+          </table>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob([tableHtml], { type: 'application/vnd.ms-excel;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Riwayat-Transaksi-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.download = `Riwayat-Transaksi-${new Date().toISOString().slice(0, 10)}.xls`;
       a.click();
     }
 
