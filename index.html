@@ -1094,14 +1094,16 @@
     }
 
     function exportDataExcel() {
-      // Urutan header disamakan persis dengan kolom transaksi
-      let csv = 'ID,Timestamp,Kategori,Detail,Qty,Modal,Jual,Untung,Status,Pelanggan\n';
+      // Header CSV disamakan persis dengan urutan kolom di Google Sheet Anda
+      let csv = 'ID Transaksi,Timestamp,Kategori,Detail Barang/Layanan,Qty,Harga Modal,Harga Jual,Keuntungan,Status Bayar,Nama Pelanggan\n';
       
       appData.transaksi.forEach(t => {
+        // Urutan variabel disesuaikan agar cocok dengan urutan header di atas
         csv += `"${t.id}","${t.timestamp}","${t.kategori}","${t.detail}",${t.qty},${t.modal},${t.jual},${t.untung},"${t.status}","${t.pelanggan}"\n`;
       });
-      
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+
+      // Tambahkan penanda BOM (\uFEFF) agar terbaca sempurna di Excel / WPS Office berbahasa Indonesia
+      const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
