@@ -64,61 +64,61 @@
   <!-- App Wrapper -->
   <div class="flex-1 flex flex-col lg:flex-row relative overflow-hidden">
     
-    <!-- Sidebar Navigation -->
-    <aside id="app-sidebar" class="w-full lg:w-72 bg-gradient-to-b from-slate-900 via-slate-900/95 to-slate-950 border-r border-slate-800/80 flex flex-col shrink-0 transition-all duration-300 z-30 shadow-2xl">
-      <div class="p-5 border-b border-slate-800/80 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-orange-500 via-pink-500 to-violet-600 flex items-center justify-center shadow-lg shadow-pink-500/25 text-white font-black text-xl tracking-wider">
+    <!-- Sidebar Navigation (Ramping w-60, Bisa Disembunyikan) -->
+    <aside id="app-sidebar" class="w-60 bg-gradient-to-b from-slate-900 via-slate-900/95 to-slate-950 border-r border-slate-800/80 flex flex-col shrink-0 transition-all duration-300 z-30 shadow-2xl absolute lg:relative inset-y-0 left-0 -translate-x-full lg:translate-x-0">
+      <div class="p-4 border-b border-slate-800/80 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-orange-500 via-pink-500 to-violet-600 flex items-center justify-center shadow-lg shadow-pink-500/25 text-white font-black text-lg tracking-wider">
             A
           </div>
           <div>
-            <h1 class="text-base font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-pink-400 to-violet-400">ALPHA KASIR</h1>
-            <p class="text-[10px] text-slate-400 font-semibold">Multi-Layanan & Smart Retail</p>
+            <h1 class="text-xs font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-pink-400 to-violet-400">ALPHA KASIR</h1>
+            <p class="text-[9px] text-slate-400 font-semibold">Multi-Layanan & Smart Retail</p>
           </div>
         </div>
-        <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-white p-2">
-          <i class="fas fa-times text-lg"></i>
+        <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-white p-1.5">
+          <i class="fas fa-times text-sm"></i>
         </button>
       </div>
 
       <!-- Navigation Menu Items -->
-      <nav class="flex-1 p-3.5 space-y-1.5 overflow-y-auto custom-scrollbar text-xs font-bold">
-        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition bg-gradient-to-r from-orange-600 to-amber-500 text-white shadow-lg shadow-orange-600/30">
-          <i class="fas fa-chart-pie w-5 text-center text-sm"></i> Dashboard Utama
+      <nav class="flex-1 p-3 space-y-1 overflow-y-auto custom-scrollbar text-xs font-bold">
+        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition bg-gradient-to-r from-orange-600 to-amber-500 text-white shadow-md shadow-orange-600/30">
+          <i class="fas fa-chart-pie w-4 text-center text-xs"></i> Dashboard Utama
         </button>
-        <button onclick="switchTab('kasir')" id="nav-kasir" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition text-slate-300 hover:text-white hover:bg-slate-800/80 group">
-          <i class="fas fa-cash-register w-5 text-center text-sm text-pink-400 group-hover:scale-110 transition"></i> Kasir Multi-Layanan
+        <button onclick="switchTab('kasir')" id="nav-kasir" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition text-slate-300 hover:text-white hover:bg-slate-800/80 group">
+          <i class="fas fa-cash-register w-4 text-center text-xs text-pink-400 group-hover:scale-110 transition"></i> Kasir Multi-Layanan
         </button>
-        <button onclick="switchTab('produk')" id="nav-produk" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition text-slate-300 hover:text-white hover:bg-slate-800/80 group">
-          <i class="fas fa-boxes w-5 text-center text-sm text-cyan-400 group-hover:scale-110 transition"></i> Stok Barang & Jasa
+        <button onclick="switchTab('produk')" id="nav-produk" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition text-slate-300 hover:text-white hover:bg-slate-800/80 group">
+          <i class="fas fa-boxes w-4 text-center text-xs text-cyan-400 group-hover:scale-110 transition"></i> Stok Barang & Jasa
         </button>
-        <button onclick="switchTab('servis')" id="nav-servis" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition text-slate-300 hover:text-white hover:bg-slate-800/80 group">
-          <i class="fas fa-laptop-code w-5 text-center text-sm text-violet-400 group-hover:scale-110 transition"></i> Servis PC & Laptop
+        <button onclick="switchTab('servis')" id="nav-servis" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition text-slate-300 hover:text-white hover:bg-slate-800/80 group">
+          <i class="fas fa-laptop-code w-4 text-center text-xs text-violet-400 group-hover:scale-110 transition"></i> Servis PC & Laptop
         </button>
-        <button onclick="switchTab('kasbon')" id="nav-kasbon" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition text-slate-300 hover:text-white hover:bg-slate-800/80 group">
-          <i class="fas fa-file-invoice-dollar w-5 text-center text-sm text-emerald-400 group-hover:scale-110 transition"></i> Buku Kasbon & Piutang
+        <button onclick="switchTab('kasbon')" id="nav-kasbon" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition text-slate-300 hover:text-white hover:bg-slate-800/80 group">
+          <i class="fas fa-file-invoice-dollar w-4 text-center text-xs text-emerald-400 group-hover:scale-110 transition"></i> Buku Kasbon & Piutang
         </button>
-        <button onclick="switchTab('operasional')" id="nav-operasional" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition text-slate-300 hover:text-white hover:bg-slate-800/80 group">
-          <i class="fas fa-wallet w-5 text-center text-sm text-amber-400 group-hover:scale-110 transition"></i> Operasional & Bagi Laba
+        <button onclick="switchTab('operasional')" id="nav-operasional" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition text-slate-300 hover:text-white hover:bg-slate-800/80 group">
+          <i class="fas fa-wallet w-4 text-center text-xs text-amber-400 group-hover:scale-110 transition"></i> Operasional & Bagi Laba
         </button>
-        <button onclick="switchTab('riwayat')" id="nav-riwayat" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition text-slate-300 hover:text-white hover:bg-slate-800/80 group">
-          <i class="fas fa-history w-5 text-center text-sm text-rose-400 group-hover:scale-110 transition"></i> Riwayat Transaksi
+        <button onclick="switchTab('riwayat')" id="nav-riwayat" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition text-slate-300 hover:text-white hover:bg-slate-800/80 group">
+          <i class="fas fa-history w-4 text-center text-xs text-rose-400 group-hover:scale-110 transition"></i> Riwayat Transaksi
         </button>
       </nav>
 
       <!-- Sidebar Footer / Sync Status -->
-      <div class="p-4 border-t border-slate-800/80 space-y-3 bg-slate-950/60">
+      <div class="p-3.5 border-t border-slate-800/80 space-y-2 bg-slate-950/60">
         <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2 overflow-hidden">
-            <i class="fas fa-database text-cyan-400 text-xs shrink-0"></i>
-            <span id="sync-status-badge" class="text-[10px] text-amber-400 font-bold truncate">Mode Lokal</span>
+          <div class="flex items-center gap-1.5 overflow-hidden">
+            <i class="fas fa-database text-cyan-400 text-[10px] shrink-0"></i>
+            <span id="sync-status-badge" class="text-[9px] text-amber-400 font-bold truncate">Mode Lokal</span>
           </div>
-          <button onclick="bukaModalSettings()" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition" title="Pengaturan URL Google Sheets">
+          <button onclick="bukaModalSettings()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition" title="Pengaturan URL Google Sheets">
             <i class="fas fa-gear text-xs text-orange-400"></i>
           </button>
         </div>
-        <button onclick="loadAllData()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-700 hover:to-slate-800 text-slate-200 font-bold text-xs transition flex items-center justify-center gap-2 border border-slate-700/50 shadow-md">
-          <i class="fas fa-rotate text-cyan-400"></i> Sinkronkan Data
+        <button onclick="loadAllData()" class="w-full py-2 rounded-xl bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-700 hover:to-slate-800 text-slate-200 font-bold text-[11px] transition flex items-center justify-center gap-1.5 border border-slate-700/50 shadow-md">
+          <i class="fas fa-rotate text-cyan-400 text-[10px]"></i> Sinkronkan Data
         </button>
       </div>
     </aside>
@@ -127,7 +127,7 @@
     <main class="flex-1 flex flex-col min-w-0 overflow-y-auto custom-scrollbar h-screen">
       
       <!-- Top Mobile Header -->
-      <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800/80 px-4 py-3.5 flex items-center justify-between sticky top-0 z-20">
+      <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800/80 px-4 py-3 flex items-center justify-between sticky top-0 z-20">
         <div class="flex items-center gap-3">
           <button onclick="toggleSidebar()" class="w-9 h-9 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center justify-center transition shadow-md">
             <i class="fas fa-bars text-sm text-orange-400"></i>
@@ -817,13 +817,7 @@
 
     function toggleSidebar() {
       const sidebar = document.getElementById('app-sidebar');
-      if (sidebar.classList.contains('-ml-72') || sidebar.style.display === 'none') {
-        sidebar.classList.remove('-ml-72');
-        sidebar.style.display = 'flex';
-      } else {
-        sidebar.classList.add('-ml-72');
-        setTimeout(() => { if(window.innerWidth < 1024) sidebar.style.display = 'none'; }, 300);
-      }
+      sidebar.classList.toggle('-translate-x-full');
     }
 
     function switchTab(tabId) {
@@ -833,7 +827,7 @@
         const nav = document.getElementById(`nav-${t}`);
         if (view) view.classList.add('hidden');
         if (nav) {
-          nav.className = 'w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition text-slate-300 hover:text-white hover:bg-slate-800/80 font-bold group';
+          nav.className = 'w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition text-slate-300 hover:text-white hover:bg-slate-800/80 font-bold group';
         }
       });
 
@@ -841,7 +835,7 @@
       const activeNav = document.getElementById(`nav-${tabId}`);
       if (activeView) activeView.classList.remove('hidden');
       if (activeNav) {
-        activeNav.className = 'w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition bg-gradient-to-r from-orange-600 via-pink-600 to-amber-500 text-white shadow-lg shadow-orange-600/30 font-black';
+        activeNav.className = 'w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition bg-gradient-to-r from-orange-600 via-pink-600 to-amber-500 text-white shadow-md shadow-orange-600/30 font-black';
       }
 
       const titles = {
@@ -862,7 +856,7 @@
         hitungSimulasiAlokasi();
       }
       if (window.innerWidth < 1024) {
-        document.getElementById('app-sidebar').classList.add('-ml-72');
+        document.getElementById('app-sidebar').classList.add('-translate-x-full');
       }
     }
 
@@ -879,10 +873,10 @@
       const badge = document.getElementById('sync-status-badge');
       if (!badge) return;
       if (GAS_API_URL) {
-        badge.className = 'text-[10px] text-emerald-400 font-bold flex items-center gap-1.5 truncate';
+        badge.className = 'text-[9px] text-emerald-400 font-bold flex items-center gap-1.5 truncate';
         badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0"></span> Terhubung ke Sheets';
       } else {
-        badge.className = 'text-[10px] text-amber-400 font-bold flex items-center gap-1.5 truncate';
+        badge.className = 'text-[9px] text-amber-400 font-bold flex items-center gap-1.5 truncate';
         badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span> Mode Lokal';
       }
     }
@@ -1963,7 +1957,7 @@
               qty: Number(row[4]) || 1,
               modal: modal,
               jual: jual,
-              untung: Number(row[7]) !== isNaN ? (Number(row[7]) || (jual - modal)) : (jual - modal),
+              untung: Number(row[7]) || (jual - modal),
               status: row[8] || 'Lunas',
               pelanggan: row[9] || 'Umum'
             });
