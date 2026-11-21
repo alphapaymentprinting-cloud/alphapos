@@ -238,12 +238,17 @@
               <input type="month" id="filter-bulan" onchange="renderDashboardRiwayat()" class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-orange-500 font-medium">
               <button onclick="resetFilterBulan()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition">Semua</button>
               
+              <!-- Tombol Export Excel -->
               <button onclick="exportDataExcel()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition flex items-center gap-1.5 shadow">
                 <i class="fas fa-file-excel"></i> Export
               </button>
+
+              <!-- Tombol Download Template Import (BARU) -->
               <button onclick="downloadTemplateImport()" class="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition flex items-center gap-1.5 shadow">
                 <i class="fas fa-download"></i> Template Import
               </button>
+
+              <!-- Tombol Upload/Import -->
               <label class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition cursor-pointer flex items-center gap-1.5 shadow">
                 <i class="fas fa-file-arrow-up"></i> Import <input type="file" accept=".csv,.txt" onchange="importDataExcel(event)" class="hidden">
               </label>
@@ -1064,14 +1069,14 @@
     }
 
     function downloadTemplateImport() {
-      // Header persis sesuai sheet Transaksi di Google Sheets Anda
+      // Header disamakan persis dengan urutan kolom di sheet Google Sheets Anda
       let csvContent = "ID,Timestamp,Kategori,Detail,Qty,Modal,Jual,Untung,Status,Pelanggan\n";
       
-      // Baris contoh data agar mudah dipahami saat diisi
+      // Baris contoh agar mudah dipahami saat diisi
       csvContent += "TRX-261122001,2026-11-22 08:30,Fisik,Kabel Data Type-C (1x),1,15000,30000,15000,Lunas,Umum\n";
       csvContent += "TRX-261122002,2026-11-22 09:15,Pulsa & Data,Telkomsel 10rb (081234567890),1,10200,12000,1800,Lunas,Budi\n";
 
-      // Membuat file CSV dengan BOM UTF-8 agar kompatibel di Excel
+      // Menggunakan penanda BOM UTF-8 agar rapi saat dibuka di Excel/WPS
       const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
