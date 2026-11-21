@@ -1894,6 +1894,22 @@
         document.getElementById('barcode-scanner-modal').classList.add('hidden');
       }
     }
+
+    // Fungsi bantu untuk mengirim data ke Google Sheets secara background
+    async function syncKeGoogleSheets(payload) {
+      if (!GAS_API_URL) return;
+      try {
+        await fetch(GAS_API_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        console.log("Data berhasil dikirim ke Google Sheets:", payload.id);
+      } catch (err) {
+        console.error("Gagal sinkronisasi ke Google Sheets:", err);
+      }
+    }
   </script>
 </body>
 </html>
