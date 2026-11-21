@@ -12,17 +12,9 @@
       theme: {
         extend: {
           colors: {
-            brand: {
-              50: '#fff7ed',
-              100: '#ffedd5',
-              500: '#f97316',
-              600: '#ea580c',
-              700: '#c2410c',
-            }
+            brand: { 50: '#fff7ed', 100: '#ffedd5', 500: '#f97316', 600: '#ea580c', 700: '#c2410c' }
           },
-          fontFamily: {
-            sans: ['Plus Jakarta Sans', 'sans-serif']
-          }
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
         }
       }
     }
@@ -30,6 +22,8 @@
   <!-- Google Fonts & FontAwesome -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- HTML2Canvas untuk bagikan struk sebagai gambar JPG -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <!-- HTML5 QR Code Scanner Library -->
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
   <style>
@@ -48,7 +42,6 @@
     .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(249, 115, 22, 0.3); border-radius: 9999px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(249, 115, 22, 0.6); }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col md:flex-row selection:bg-orange-500 selection:text-white">
@@ -66,7 +59,6 @@
   <!-- Sidebar Navigation (Collapsible, Slim w-60) -->
   <aside id="sidebar" class="w-60 bg-slate-900/95 border-r border-slate-800/80 flex flex-col justify-between shrink-0 fixed md:static inset-y-0 left-0 z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out h-screen shadow-2xl md:shadow-none">
     <div>
-      <!-- Brand Header -->
       <div class="p-5 border-b border-slate-800/80 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
           <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-orange-600 via-orange-500 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/30 overflow-hidden p-1 shrink-0">
@@ -88,7 +80,6 @@
         </button>
       </div>
 
-      <!-- Navigation Links -->
       <nav id="nav-menu" class="flex flex-col p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-160px)] custom-scrollbar">
         <div class="text-[9px] font-bold uppercase tracking-wider text-slate-500 px-3 py-1">Utama</div>
         <button onclick="switchTab('dashboard')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-300 hover:bg-slate-800/60 hover:text-white active-nav bg-slate-800 text-white" data-target="dashboard">
@@ -114,7 +105,6 @@
       </nav>
     </div>
 
-    <!-- Sidebar Footer -->
     <div class="p-3 border-t border-slate-800/80">
       <div class="glass-card p-2.5 rounded-xl flex items-center justify-between">
         <div class="flex items-center gap-2 min-w-0">
@@ -140,13 +130,11 @@
     </div>
   </aside>
 
-  <!-- Backdrop for mobile sidebar -->
   <div id="sidebar-backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-30 hidden md:hidden"></div>
 
   <!-- Main Content Area -->
   <main class="flex-1 min-w-0 p-4 md:p-8 overflow-y-auto custom-scrollbar h-screen flex flex-col">
     
-    <!-- Top Header bar with Sidebar Toggle -->
     <header class="flex items-center justify-between pb-5 mb-2 border-b border-slate-800/80 shrink-0">
       <div class="flex items-center gap-3">
         <button onclick="toggleSidebar()" class="p-2.5 rounded-2xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-orange-500/50 transition flex items-center justify-center shadow-lg">
@@ -166,9 +154,8 @@
 
     <div class="flex-1 overflow-y-auto space-y-6 pb-12 custom-scrollbar">
     
-      <!-- ================= TAB 1: DASHBOARD ================= -->
+      <!-- ================= TAB 1: DASHBOARD (RIWAYAT TRANSAKSI & IMPORT/EXPORT) ================= -->
       <section id="tab-dashboard" class="tab-content space-y-6">
-        <!-- Quick Metrics Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="glass-card p-5 rounded-3xl relative overflow-hidden group hover:border-orange-500/40 transition duration-300">
             <div class="flex items-center justify-between mb-3">
@@ -215,7 +202,6 @@
           </div>
         </div>
 
-        <!-- Akumulasi Laba & Operasional Widget -->
         <div class="glass-card p-6 rounded-3xl border border-purple-500/20 relative overflow-hidden">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
@@ -240,31 +226,44 @@
           </div>
         </div>
 
-        <!-- Riwayat Transaksi & Filter Bulan -->
-        <div class="glass-card p-6 rounded-3xl">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <!-- Riwayat Transaksi dengan Fitur Export, Import Excel, dan Hapus Massal -->
+        <div class="glass-card p-6 rounded-3xl space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h3 class="text-base font-bold text-white">Riwayat Transaksi</h3>
-              <p class="text-xs text-slate-400">Semua transaksi tercatat otomatis[cite: 1]</p>
+              <p class="text-xs text-slate-400">Kelola riwayat penjualan, migrasi data, dan hapus massal.</p>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
               <label class="text-xs font-semibold text-slate-400">Filter Bulan:</label>
               <input type="month" id="filter-bulan" onchange="renderDashboardRiwayat()" class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-orange-500 font-medium">
               <button onclick="resetFilterBulan()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition">Semua</button>
+              
+              <!-- Tombol Export & Import Excel/CSV -->
+              <button onclick="exportDataExcel()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition flex items-center gap-1.5 shadow">
+                <i class="fas fa-file-excel"></i> Export
+              </button>
+              <label class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition cursor-pointer flex items-center gap-1.5 shadow">
+                <i class="fas fa-file-arrow-up"></i> Import <input type="file" accept=".csv,.txt" onchange="importDataExcel(event)" class="hidden">
+              </label>
+              <button onclick="hapusTransaksiMasal()" class="px-3.5 py-2 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 font-bold text-xs transition flex items-center gap-1.5">
+                <i class="fas fa-trash-alt"></i> Hapus Terpilih
+              </button>
             </div>
           </div>
+
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
               <thead>
                 <tr class="border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                  <th class="py-3 px-4">Waktu & ID</th>
-                  <th class="py-3 px-4">Kategori</th>
-                  <th class="py-3 px-4">Detail / Pelanggan</th>
-                  <th class="py-3 px-4 text-center">Qty</th>
-                  <th class="py-3 px-4 text-right">Total Jual</th>
-                  <th class="py-3 px-4 text-right">Laba</th>
-                  <th class="py-3 px-4 text-center">Status</th>
-                  <th class="py-3 px-4 text-center">Aksi</th>
+                  <th class="py-3 px-3 text-center"><input type="checkbox" id="select-all-trx" onclick="toggleSelectAllTrx(this)" class="rounded bg-slate-900 border-slate-700"></th>
+                  <th class="py-3 px-3">Waktu & ID</th>
+                  <th class="py-3 px-3">Kategori</th>
+                  <th class="py-3 px-3">Detail / Pelanggan</th>
+                  <th class="py-3 px-3 text-center">Qty</th>
+                  <th class="py-3 px-3 text-right">Total Jual</th>
+                  <th class="py-3 px-3 text-right">Laba</th>
+                  <th class="py-3 px-3 text-center">Status</th>
+                  <th class="py-3 px-3 text-center">Aksi</th>
                 </tr>
               </thead>
               <tbody id="tabel-riwayat-dashboard" class="divide-y divide-slate-800/60 text-xs text-slate-300"></tbody>
@@ -275,7 +274,6 @@
 
       <!-- ================= TAB 2: KASIR PENJUALAN ================= -->
       <section id="tab-kasir" class="tab-content hidden space-y-6">
-        <!-- Pill Category Selector -->
         <div class="flex flex-wrap gap-2 bg-slate-900/60 p-1.5 rounded-2xl border border-slate-800">
           <button onclick="switchKasirMode('fisik')" id="mode-btn-fisik" class="kasir-mode-btn flex-1 min-w-[110px] py-2.5 px-3 rounded-xl text-xs font-bold transition bg-orange-500 text-white shadow-lg shadow-orange-500/20">
             <i class="fas fa-boxes mr-1"></i> Fisik
@@ -297,7 +295,6 @@
           </button>
         </div>
 
-        <!-- Kasir Barang Fisik & Cart -->
         <div id="kasir-fisik-container" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div class="lg:col-span-2 glass-card p-6 rounded-3xl space-y-4">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -336,37 +333,38 @@
                   <option value="Kasbon">Kasbon (Piutang)</option>
                 </select>
               </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Uang Diterima (Rp)</label>
+                <input type="text" id="cart-uang-bayar" oninput="formatInputRibuan(this); hitungKembalianCart();" placeholder="0" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-bold focus:outline-none focus:border-emerald-500">
+              </div>
+              <div class="flex justify-between items-center text-xs text-slate-400 bg-slate-900/60 p-2 rounded-xl border border-slate-800">
+                <span>Kembalian:</span>
+                <span id="cart-kembalian-text" class="font-bold text-emerald-400">Rp 0</span>
+              </div>
               <div class="flex justify-between items-center text-sm">
                 <span class="font-bold text-white">Total Bayar:</span>
                 <span id="cart-grand-total" class="font-extrabold text-orange-400 text-base">Rp 0</span>
               </div>
               <button onclick="prosesCheckoutCart()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-bold text-xs transition shadow-lg shadow-orange-500/20">
-                Proses Transaksi Fisik
+                Proses Transaksi & Cetak Struk
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Kasir Digital Multi-Item -->
         <div id="kasir-digital-container" class="hidden glass-card p-6 rounded-3xl space-y-5">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
             <h3 id="digital-form-title" class="text-base font-bold text-white flex items-center gap-2">
               <i class="fas fa-mobile-alt text-orange-400"></i> Input Transaksi Digital
             </h3>
-            <div class="flex items-center gap-2">
-              <label class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold cursor-pointer transition flex items-center gap-1.5">
-                <i class="fas fa-file-csv text-emerald-400"></i> Import CSV
-                <input type="file" accept=".csv,.txt" onchange="handleExcelImport(event)" class="hidden">
-              </label>
-              <button type="button" onclick="addDigitalRow()" class="px-3 py-2 rounded-xl bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 border border-orange-500/30 text-xs font-bold transition flex items-center gap-1.5">
-                <i class="fas fa-plus"></i> Tambah Baris
-              </button>
-            </div>
+            <button type="button" onclick="addDigitalRow()" class="px-3 py-2 rounded-xl bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 border border-orange-500/30 text-xs font-bold transition flex items-center gap-1.5">
+              <i class="fas fa-plus"></i> Tambah Baris
+            </button>
           </div>
 
           <div id="digital-items-list" class="space-y-3"></div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-800 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-800 text-xs">
             <div>
               <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Nama Pelanggan</label>
               <input type="text" id="dig-pelanggan" placeholder="Umum" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-orange-500 font-medium">
@@ -378,6 +376,14 @@
                 <option value="Kasbon">Kasbon (Piutang)</option>
               </select>
             </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Uang Diterima (Rp)</label>
+              <input type="text" id="dig-uang-bayar" oninput="formatInputRibuan(this); hitungKembalianDig();" placeholder="0" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-bold focus:outline-none focus:border-emerald-500">
+            </div>
+          </div>
+          <div class="flex justify-between items-center text-xs text-slate-400 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
+            <span>Uang Kembalian Digital:</span>
+            <span id="dig-kembalian-text" class="font-bold text-emerald-400">Rp 0</span>
           </div>
 
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
@@ -392,7 +398,7 @@
               </div>
             </div>
             <button onclick="prosesCheckoutDigital()" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-bold text-xs transition shadow-lg shadow-orange-500/20">
-              Simpan Semua Transaksi
+              Simpan Transaksi & Cetak Struk
             </button>
           </div>
         </div>
@@ -419,7 +425,7 @@
             <table class="w-full text-left border-collapse">
               <thead>
                 <tr class="border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                  <th class="py-3 px-4">Foto & ID</th>
+                  <th class="py-3 px-4">ID</th>
                   <th class="py-3 px-4">Kategori</th>
                   <th class="py-3 px-4">Nama Produk / Layanan</th>
                   <th class="py-3 px-4 text-right">Harga Modal</th>
@@ -456,7 +462,7 @@
                 <th class="py-3 px-4">Keluhan</th>
                 <th class="py-3 px-4 text-right">Estimasi Biaya</th>
                 <th class="py-3 px-4 text-center">Status</th>
-                <th class="py-3 px-4 text-center">Aksi</th>
+                <th class="py-3 px-4 text-center">Aksi (Edit / Cetak / Hapus)</th>
               </tr>
             </thead>
             <tbody id="tabel-servis-body" class="divide-y divide-slate-800/60 text-xs text-slate-300"></tbody>
@@ -516,7 +522,6 @@
                 <input type="text" id="ops-catatan" placeholder="Contoh: Alokasi Bulan Ini" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500 font-medium">
               </div>
 
-              <!-- Rincian Biaya Operasional Toko -->
               <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-rose-500/20 space-y-2.5">
                 <div class="flex items-center justify-between">
                   <span class="text-[10px] font-bold uppercase tracking-wider text-rose-400">Biaya Operasional Toko</span>
@@ -525,19 +530,19 @@
                 <div class="grid grid-cols-2 gap-2">
                   <div>
                     <label class="block text-[9px] font-bold text-slate-400 mb-0.5">Listrik & Air (Rp)</label>
-                    <input type="number" id="biaya-listrik" placeholder="0" oninput="hitungAlokasiLaba()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-rose-500">
+                    <input type="text" id="biaya-listrik" oninput="formatInputRibuan(this); hitungAlokasiLaba();" placeholder="0" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white font-bold focus:outline-none focus:border-rose-500">
                   </div>
                   <div>
                     <label class="block text-[9px] font-bold text-slate-400 mb-0.5">Tagihan WiFi (Rp)</label>
-                    <input type="number" id="biaya-wifi" placeholder="0" oninput="hitungAlokasiLaba()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-rose-500">
+                    <input type="text" id="biaya-wifi" oninput="formatInputRibuan(this); hitungAlokasiLaba();" placeholder="0" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white font-bold focus:outline-none focus:border-rose-500">
                   </div>
                   <div>
                     <label class="block text-[9px] font-bold text-slate-400 mb-0.5">Pulsa/Data (Rp)</label>
-                    <input type="number" id="biaya-pulsa" placeholder="0" oninput="hitungAlokasiLaba()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-rose-500">
+                    <input type="text" id="biaya-pulsa" oninput="formatInputRibuan(this); hitungAlokasiLaba();" placeholder="0" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white font-bold focus:outline-none focus:border-rose-500">
                   </div>
                   <div>
                     <label class="block text-[9px] font-bold text-slate-400 mb-0.5">Lainnya (Rp)</label>
-                    <input type="number" id="biaya-lainnya" placeholder="0" oninput="hitungAlokasiLaba()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-rose-500">
+                    <input type="text" id="biaya-lainnya" oninput="formatInputRibuan(this); hitungAlokasiLaba();" placeholder="0" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white font-bold focus:outline-none focus:border-rose-500">
                   </div>
                 </div>
                 <div class="pt-1.5 border-t border-slate-800/80 flex justify-between items-center">
@@ -622,22 +627,14 @@
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Nama Produk / Jasa</label>
           <input type="text" id="prod-nama" required placeholder="Nama produk" class="w-full bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 font-medium">
         </div>
-        <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Foto (URL / Kamera)</label>
-          <div class="flex gap-2 mb-2">
-            <input type="url" id="prod-gambar" placeholder="https://..." class="flex-1 bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 font-medium">
-            <button type="button" onclick="openCameraForProduct()" class="px-4 py-3 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs transition">Foto</button>
-          </div>
-          <input type="file" id="prod-camera-input" accept="image/*" capture="environment" class="hidden" onchange="handleCameraCapture(event)">
-        </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Harga Modal (Rp)</label>
-            <input type="number" id="prod-modal" required placeholder="0" class="w-full bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 font-medium">
+            <input type="text" id="prod-modal" oninput="formatInputRibuan(this)" placeholder="0" class="w-full bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-white font-bold focus:outline-none focus:border-orange-500">
           </div>
           <div>
             <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Harga Jual (Rp)</label>
-            <input type="number" id="prod-jual" required placeholder="0" class="w-full bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 font-medium">
+            <input type="text" id="prod-jual" oninput="formatInputRibuan(this)" placeholder="0" class="w-full bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-white font-bold focus:outline-none focus:border-orange-500">
           </div>
         </div>
         <div>
@@ -647,18 +644,19 @@
       </div>
       <div class="flex gap-3 pt-2">
         <button onclick="closeModalProduk()" class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-2xl text-xs transition">Batal</button>
-        <button onclick="simpanDataProduk()" class="flex-1 py-3 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-bold rounded-2xl text-xs transition shadow-lg shadow-orange-500/20">Simpan</button>
+        <button onclick="simpanDataProduk()" class="flex-1 py-3 bg-gradient-to-r from-orange-600 to-amber-600 text-white font-bold rounded-2xl text-xs transition">Simpan</button>
       </div>
     </div>
   </div>
 
-  <!-- Modal Input Servis PC -->
+  <!-- Modal Input/Edit Servis PC -->
   <div id="modal-servis" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
     <div class="glass-card p-6 rounded-3xl w-full max-w-md space-y-4 border border-slate-800">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-        <h3 class="text-base font-bold text-white">Input Servis Laptop / PC Masuk</h3>
+        <h3 id="modal-servis-title" class="text-base font-bold text-white">Input Servis Laptop / PC Masuk</h3>
         <button onclick="closeModalServis()" class="text-slate-400 hover:text-white p-1"><i class="fas fa-times"></i></button>
       </div>
+      <input type="hidden" id="srv-edit-id">
       <div class="space-y-3 text-xs">
         <div>
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Nama Pelanggan</label>
@@ -678,43 +676,62 @@
         </div>
         <div>
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Estimasi Biaya (Rp)</label>
-          <input type="number" id="srv-biaya" required placeholder="0" class="w-full bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 font-medium">
+          <input type="text" id="srv-biaya" oninput="formatInputRibuan(this)" required placeholder="0" class="w-full bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-white font-bold focus:outline-none focus:border-blue-500">
         </div>
       </div>
       <div class="flex gap-3 pt-2">
         <button onclick="closeModalServis()" class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-2xl text-xs transition">Batal</button>
-        <button onclick="simpanDataServis()" class="flex-1 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-2xl text-xs transition shadow-lg shadow-blue-500/20">Simpan</button>
+        <button onclick="simpanDataServis()" class="flex-1 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-2xl text-xs transition">Simpan</button>
       </div>
     </div>
   </div>
 
-  <!-- Barcode Scanner Modal -->
+  <!-- Modal Struk / Cetak / Bagikan JPG -->
+  <div id="modal-struk" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md hidden flex flex-col items-center justify-center p-4">
+    <div class="glass-card p-6 rounded-3xl w-full max-w-sm space-y-4 border border-slate-800 bg-white text-slate-900" id="print-area">
+      <div class="text-center space-y-1">
+        <h4 class="font-black text-lg">ALPHA RETAIL</h4>
+        <p class="text-[10px] text-slate-500">Struk Pembayaran & Layanan Sah</p>
+      </div>
+      <div class="border-t border-b border-dashed border-slate-300 py-2 text-[11px] space-y-1 text-slate-700">
+        <div class="flex justify-between"><span>No ID:</span><span id="struk-id">-</span></div>
+        <div class="flex justify-between"><span>Waktu:</span><span id="struk-waktu">-</span></div>
+        <div class="flex justify-between"><span>Pelanggan:</span><span id="struk-pelanggan">-</span></div>
+      </div>
+      <div id="struk-items-list" class="text-xs space-y-1 text-slate-800 max-h-36 overflow-y-auto"></div>
+      <div class="border-t border-dashed border-slate-300 pt-2 text-xs space-y-1 text-slate-800">
+        <div class="flex justify-between font-bold"><span>Total:</span><span id="struk-total">Rp 0</span></div>
+        <div class="flex justify-between"><span>Bayar:</span><span id="struk-bayar">Rp 0</span></div>
+        <div class="flex justify-between"><span>Kembali:</span><span id="struk-kembali">Rp 0</span></div>
+      </div>
+      <div class="text-center text-[9px] text-slate-400 pt-2">Terima Kasih Atas Kunjungan Anda</div>
+    </div>
+    <div class="flex gap-3 mt-4">
+      <button onclick="window.print()" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow"><i class="fas fa-print mr-1"></i> Cetak Thermal</button>
+      <button onclick="bagikanStrukJPG()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow"><i class="fas fa-share-nodes mr-1"></i> Bagikan JPG</button>
+      <button onclick="tutupModalStruk()" class="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-200 font-bold text-xs">Tutup</button>
+    </div>
+  </div>
+
   <div id="barcode-scanner-modal" class="fixed inset-0 z-50 bg-slate-950/90 hidden flex flex-col items-center justify-center p-4">
     <div class="glass-card p-6 rounded-3xl w-full max-w-lg space-y-4 text-center border border-slate-800">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-        <h3 class="text-base font-bold text-white flex items-center gap-2">
-          <i class="fas fa-barcode text-orange-400"></i> Scan Barcode
-        </h3>
+        <h3 class="text-base font-bold text-white flex items-center gap-2"><i class="fas fa-barcode text-orange-400"></i> Scan Barcode</h3>
         <button onclick="closeBarcodeScanner()" class="text-slate-400 hover:text-white p-2"><i class="fas fa-times text-lg"></i></button>
       </div>
       <div id="barcode-video" class="w-full h-64 bg-slate-900 rounded-2xl overflow-hidden relative border border-slate-800"></div>
     </div>
   </div>
 
-  <!-- Modal URL Google Apps Script -->
   <div id="modal-api-url" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
     <div class="glass-card p-6 rounded-3xl w-full max-w-md space-y-4 border border-slate-800">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-        <h3 class="text-base font-bold text-white flex items-center gap-2">
-          <i class="fas fa-table text-emerald-400"></i> Google Sheets API
-        </h3>
+        <h3 class="text-base font-bold text-white flex items-center gap-2"><i class="fas fa-table text-emerald-400"></i> Google Sheets API</h3>
         <button onclick="closeModalApiUrl()" class="text-slate-400 hover:text-white p-1"><i class="fas fa-times"></i></button>
       </div>
       <div class="space-y-3 text-xs">
-        <p class="text-slate-300 leading-relaxed">Tempelkan link <b>Web App URL (`/exec`)</b> dari Google Apps Script Anda:</p>
-        <div>
-          <input type="url" id="input-gas-url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-500 font-medium">
-        </div>
+        <p class="text-slate-300 leading-relaxed">Tempelkan link <b>Web App URL (`/exec`)</b> dari Google Apps Script:</p>
+        <input type="url" id="input-gas-url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-500 font-medium">
       </div>
       <div class="flex gap-3 pt-2">
         <button onclick="hapusApiUrl()" class="py-3 px-4 bg-rose-500/10 text-rose-400 font-bold rounded-2xl text-xs transition">Putuskan</button>
@@ -723,14 +740,11 @@
     </div>
   </div>
 
-  <!-- Hidden Print Area -->
-  <div id="print-area" class="hidden"></div>
-
   <!-- ================= JAVASCRIPT ================= -->
   <script>
     let GAS_API_URL = localStorage.getItem('alpha_gas_url') || '';
     let appData = {
-      dashboard: { omzetHariIni: 0, untungHariIni: 0, jumlahTrxHariIni: 0, totalLabaKeseluruhan: 0, totalDialokasikan: 0, saldoLabaTersedia: 0, stokMenipisCount: 0, totalPiutang: 0 },
+      dashboard: {},
       produk: [],
       transaksi: [],
       servis: [],
@@ -768,74 +782,49 @@
       }
     }
 
+    // Format Angka dengan Titik Ribuan Otomatis
+    function parseRupiah(str) {
+      if (!str) return 0;
+      return Number(String(str).replace(/[^0-9]/g, '')) || 0;
+    }
+
+    function formatRupiah(angka) {
+      return 'Rp ' + Number(angka || 0).toLocaleString('id-ID');
+    }
+
+    function formatInputRibuan(input) {
+      let val = parseRupiah(input.value);
+      input.value = val > 0 ? val.toLocaleString('id-ID') : '';
+    }
+
     function openModalApiUrl() {
       document.getElementById('input-gas-url').value = GAS_API_URL;
       document.getElementById('modal-api-url').classList.remove('hidden');
     }
-
-    function closeModalApiUrl() {
-      document.getElementById('modal-api-url').classList.add('hidden');
-    }
-
+    function closeModalApiUrl() { document.getElementById('modal-api-url').classList.add('hidden'); }
     function simpanApiUrl() {
       const url = document.getElementById('input-gas-url').value.trim();
-      if (!url || !url.includes('/exec')) {
-        alert('Masukkan URL Apps Script yang valid!');
-        return;
-      }
-      GAS_API_URL = url;
-      localStorage.setItem('alpha_gas_url', GAS_API_URL);
-      closeModalApiUrl();
-      loadAllData();
+      if (!url || !url.includes('/exec')) { alert('Masukkan URL Apps Script yang valid!'); return; }
+      GAS_API_URL = url; localStorage.setItem('alpha_gas_url', GAS_API_URL);
+      closeModalApiUrl(); loadAllData();
     }
-
     function hapusApiUrl() {
-      GAS_API_URL = '';
-      localStorage.removeItem('alpha_gas_url');
-      closeModalApiUrl();
-      loadAllData();
-    }
-
-    async function sendToGoogleSheets(action, payloadObj) {
-      if (!GAS_API_URL) return false;
-      showLoading(true, 'Menyinkronkan...');
-      try {
-        const res = await fetch(GAS_API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action, ...payloadObj })
-        });
-        const json = await res.json();
-        if (!json.success) alert('Info: ' + json.message);
-        await loadAllData();
-        return true;
-      } catch (err) {
-        console.error(err);
-        showLoading(false);
-        return false;
-      }
+      GAS_API_URL = ''; localStorage.removeItem('alpha_gas_url');
+      closeModalApiUrl(); loadAllData();
     }
 
     async function loadAllData() {
       updateSyncStatusUI();
       showLoading(true, GAS_API_URL ? 'Mengambil data Sheets...' : 'Memuat data...');
-      
       if (GAS_API_URL) {
         try {
           const response = await fetch(GAS_API_URL);
           const result = await response.json();
           if (result.success) {
-            appData = result;
-            calculateDashboardMetrics();
-            showLoading(false);
-            renderAllViews();
-            return;
+            appData = result; calculateDashboardMetrics(); showLoading(false); renderAllViews(); return;
           }
-        } catch (err) {
-          console.error(err);
-        }
+        } catch (err) { console.error(err); }
       }
-
       setTimeout(() => {
         const saved = localStorage.getItem('alpha_pos_data');
         if (saved) {
@@ -844,21 +833,17 @@
           appData = {
             dashboard: {},
             produk: [
-              { id: 'PRD-001', kategori: 'Fisik', nama: 'Kabel Data Type-C', modal: 15000, jual: 30000, stok: 12, gambar: '' },
-              { id: 'PRD-002', kategori: 'Jasa', nama: 'Fotocopy Hitam Putih', modal: 100, jual: 300, stok: 9999, gambar: '' }
+              { id: 'PRD-001', kategori: 'Fisik', nama: 'Kabel Data Type-C', modal: 15000, jual: 30000, stok: 12 },
+              { id: 'PRD-002', kategori: 'Jasa', nama: 'Fotocopy Hitam Putih', modal: 100, jual: 300, stok: 9999 }
             ],
             transaksi: [], servis: [], kasbon: [], operasional: []
           };
         }
-        calculateDashboardMetrics();
-        showLoading(false);
-        renderAllViews();
+        calculateDashboardMetrics(); showLoading(false); renderAllViews();
       }, 300);
     }
 
-    function saveData() {
-      localStorage.setItem('alpha_pos_data', JSON.stringify(appData));
-    }
+    function saveData() { localStorage.setItem('alpha_pos_data', JSON.stringify(appData)); }
 
     function calculateDashboardMetrics() {
       const todayStr = new Date().toISOString().slice(0, 10);
@@ -890,24 +875,21 @@
         el.classList.remove('bg-slate-800', 'text-white');
         el.classList.add('text-slate-300');
       });
-
       document.getElementById('tab-' + tabId).classList.remove('hidden');
       const activeBtn = document.querySelector(`.nav-btn[data-target="${tabId}"]`);
       if (activeBtn) {
         activeBtn.classList.add('bg-slate-800', 'text-white');
         activeBtn.classList.remove('text-slate-300');
       }
-
       const titles = {
-        'dashboard': 'Dashboard & Ringkasan',
+        'dashboard': 'Dashboard & Riwayat Transaksi',
         'kasir': 'Kasir Multi-Layanan',
         'produk': 'Stok Barang & Jasa',
-        'servis': 'Servis PC',
-        'kasbon': 'Buku Kasbon',
-        'operasional': 'Operasional & Laba'
+        'servis': 'Servis PC & Upgrade',
+        'kasbon': 'Buku Kasbon Piutang',
+        'operasional': 'Operasional & Bagi Laba'
       };
       document.getElementById('header-title-text').innerText = titles[tabId] || 'ALPHA';
-
       if (window.innerWidth < 768) toggleSidebar();
     }
 
@@ -937,10 +919,7 @@
       renderTabelOperasional();
     }
 
-    function formatRupiah(angka) {
-      return 'Rp ' + Number(angka || 0).toLocaleString('id-ID');
-    }
-
+    // ================= RIWAYAT TRANSAKSI, EXPORT, IMPORT & HAPUS MASAL =================
     function renderDashboardRiwayat() {
       const filterBulan = document.getElementById('filter-bulan').value;
       const tbody = document.getElementById('tabel-riwayat-dashboard');
@@ -948,27 +927,32 @@
 
       const filtered = appData.transaksi.filter(t => !filterBulan || (t.timestamp && t.timestamp.startsWith(filterBulan)));
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-500">Tidak ada riwayat transaksi</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-500">Tidak ada riwayat transaksi</td></tr>`;
         return;
       }
 
       filtered.forEach(t => {
         tbody.innerHTML += `
           <tr class="hover:bg-slate-900/60 transition">
-            <td class="py-3 px-4"><div class="font-bold text-white">${t.timestamp}</div><div class="text-[10px] text-slate-500">${t.id}</div></td>
-            <td class="py-3 px-4"><span class="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-slate-800 text-orange-400">${t.kategori}</span></td>
-            <td class="py-3 px-4 font-medium text-white">${t.detail} <span class="text-slate-500 block text-[10px]">${t.pelanggan}</span></td>
-            <td class="py-3 px-4 text-center">${t.qty}</td>
-            <td class="py-3 px-4 text-right font-bold text-white">${formatRupiah(t.jual)}</td>
-            <td class="py-3 px-4 text-right font-bold text-emerald-400">${formatRupiah(t.untung)}</td>
-            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded-lg text-[10px] font-bold ${t.status === 'Lunas' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">${t.status}</span></td>
-            <td class="py-3 px-4 text-center flex items-center justify-center gap-1">
-              <button onclick="cetakStruk('${t.id}')" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl"><i class="fas fa-print"></i></button>
-              <button onclick="hapusTransaksi('${t.id}')" class="p-2 bg-rose-500/10 text-rose-400 rounded-xl"><i class="fas fa-trash"></i></button>
+            <td class="py-3 px-3 text-center"><input type="checkbox" class="trx-checkbox rounded bg-slate-900 border-slate-700" value="${t.id}"></td>
+            <td class="py-3 px-3"><div class="font-bold text-white">${t.timestamp}</div><div class="text-[10px] text-slate-500">${t.id}</div></td>
+            <td class="py-3 px-3"><span class="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-slate-800 text-orange-400">${t.kategori}</span></td>
+            <td class="py-3 px-3 font-medium text-white">${t.detail} <span class="text-slate-500 block text-[10px]">${t.pelanggan}</span></td>
+            <td class="py-3 px-3 text-center">${t.qty}</td>
+            <td class="py-3 px-3 text-right font-bold text-white">${formatRupiah(t.jual)}</td>
+            <td class="py-3 px-3 text-right font-bold text-emerald-400">${formatRupiah(t.untung)}</td>
+            <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-lg text-[10px] font-bold ${t.status === 'Lunas' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">${t.status}</span></td>
+            <td class="py-3 px-3 text-center flex items-center justify-center gap-1">
+              <button onclick="bukaStrukTransaksi('${t.id}')" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl" title="Cetak/Bagikan Struk"><i class="fas fa-print"></i></button>
+              <button onclick="hapusTransaksi('${t.id}')" class="p-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-xl" title="Hapus"><i class="fas fa-trash"></i></button>
             </td>
           </tr>
         `;
       });
+    }
+
+    function toggleSelectAllTrx(master) {
+      document.querySelectorAll('.trx-checkbox').forEach(cb => cb.checked = master.checked);
     }
 
     function resetFilterBulan() {
@@ -978,11 +962,70 @@
 
     async function hapusTransaksi(id) {
       if (!confirm('Hapus transaksi ini?')) return;
-      if (GAS_API_URL) { await sendToGoogleSheets('hapusTransaksi', { id }); return; }
       appData.transaksi = appData.transaksi.filter(t => t.id !== id);
       calculateDashboardMetrics(); saveData(); renderAllViews();
     }
 
+    async function hapusTransaksiMasal() {
+      const checked = document.querySelectorAll('.trx-checkbox:checked');
+      if (checked.length === 0) { alert('Pilih transaksi yang ingin dihapus terlebih dahulu!'); return; }
+      if (!confirm(`Hapus ${checked.length} transaksi terpilih?`)) return;
+
+      const idsToRemove = Array.from(checked).map(cb => cb.value);
+      appData.transaksi = appData.transaksi.filter(t => !idsToRemove.includes(t.id));
+      calculateDashboardMetrics(); saveData(); renderAllViews();
+      alert('Transaksi terpilih berhasil dihapus!');
+    }
+
+    // Export Excel / CSV
+    function exportDataExcel() {
+      let csv = 'ID,Timestamp,Kategori,Detail,Qty,Modal,Jual,Untung,Status,Pelanggan\n';
+      appData.transaksi.forEach(t => {
+        csv += `"${t.id}","${t.timestamp}","${t.kategori}","${t.detail}",${t.qty},${t.modal},${t.jual},${t.untung},"${t.status}","${t.pelanggan}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Riwayat-Transaksi-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+    }
+
+    // Import Excel / CSV ke Riwayat Transaksi
+    function importDataExcel(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const lines = e.target.result.split(/\r\n|\n/).filter(l => l.trim() !== '');
+        if (lines.length <= 1) { alert('File kosong atau format tidak valid.'); return; }
+        
+        let importedCount = 0;
+        for (let i = 1; i < lines.length; i++) {
+          const cols = lines[i].split(/,|\t/);
+          if (cols.length >= 7) {
+            appData.transaksi.unshift({
+              id: cols[0] ? cols[0].replace(/['"]+/g, '').trim() : 'TRX-' + Date.now() + i,
+              timestamp: cols[1] ? cols[1].replace(/['"]+/g, '').trim() : new Date().toISOString().slice(0, 10),
+              kategori: cols[2] ? cols[2].replace(/['"]+/g, '').trim() : 'Import',
+              detail: cols[3] ? cols[3].replace(/['"]+/g, '').trim() : 'Data Migrasi',
+              qty: Number(cols[4]) || 1,
+              modal: Number(cols[5]) || 0,
+              jual: Number(cols[6]) || 0,
+              untung: Number(cols[7]) || ((Number(cols[6]) || 0) - (Number(cols[5]) || 0)),
+              status: cols[8] ? cols[8].replace(/['"]+/g, '').trim() : 'Lunas',
+              pelanggan: cols[9] ? cols[9].replace(/['"]+/g, '').trim() : 'Umum'
+            });
+            importedCount++;
+          }
+        }
+        calculateDashboardMetrics(); saveData(); renderAllViews();
+        alert(`Berhasil mengimport ${importedCount} data transaksi ke Riwayat Transaksi!`);
+      };
+      reader.readAsText(file);
+    }
+
+    // ================= KASIR PENJUALAN =================
     function renderKasirDropdowns() { filterProdukKasirList(); renderCart(); }
 
     function filterProdukKasirList() {
@@ -1057,23 +1100,29 @@
         `;
       });
       document.getElementById('cart-grand-total').innerText = formatRupiah(grandTotal);
+      hitungKembalianCart();
+    }
+
+    function hitungKembalianCart() {
+      const grandTotal = cart.reduce((acc, item) => acc + (item.jual * item.qty), 0);
+      const uangBayar = parseRupiah(document.getElementById('cart-uang-bayar').value);
+      const kembalian = uangBayar - grandTotal;
+      document.getElementById('cart-kembalian-text').innerText = formatRupiah(kembalian >= 0 ? kembalian : 0);
     }
 
     async function prosesCheckoutCart() {
       if (cart.length === 0) { alert('Keranjang kosong!'); return; }
       const pelanggan = document.getElementById('cart-pelanggan').value.trim() || 'Umum';
       const statusBayar = document.getElementById('cart-status-bayar').value;
+      const grandTotal = cart.reduce((acc, item) => acc + (item.jual * item.qty), 0);
+      const uangBayar = parseRupiah(document.getElementById('cart-uang-bayar').value);
 
-      if (GAS_API_URL) {
-        for (let item of cart) {
-          await sendToGoogleSheets('prosesTransaksi', { data: { kategori: item.kategori, produkId: item.id, detail: item.nama, qty: item.qty, modal: item.modal, jual: item.jual, statusBayar, pelanggan } });
-        }
-        cart = []; document.getElementById('cart-pelanggan').value = ''; renderCart(); return;
+      if (statusBayar === 'Lunas' && uangBayar < grandTotal) {
+        alert('Uang diterima kurang dari total pembayaran!'); return;
       }
 
-      let grandTotal = 0, grandModal = 0, grandQty = 0, detailNames = [];
+      let grandModal = 0, grandQty = 0, detailNames = [];
       cart.forEach(item => {
-        grandTotal += item.jual * item.qty;
         grandModal += item.modal * item.qty;
         grandQty += item.qty;
         detailNames.push(`${item.nama} (${item.qty}x)`);
@@ -1082,19 +1131,21 @@
       });
 
       const now = new Date();
-      appData.transaksi.unshift({
-        id: 'TRX-' + Date.now().toString().slice(-6),
+      const newTrxId = 'TRX-' + Date.now().toString().slice(-6);
+      const newTrx = {
+        id: newTrxId,
         timestamp: now.toISOString().slice(0, 10) + ' ' + now.toTimeString().slice(0, 5),
-        kategori: 'Fisik', detail: detailNames.join(', '), qty: grandQty, modal: grandModal, jual: grandTotal, untung: grandTotal - grandModal, status: statusBayar, pelanggan
-      });
+        kategori: 'Fisik', detail: detailNames.join(', '), qty: grandQty, modal: grandModal, jual: grandTotal, untung: grandTotal - grandModal, status: statusBayar, pelanggan, bayar: uangBayar, kembalian: Math.max(0, uangBayar - grandTotal)
+      };
 
+      appData.transaksi.unshift(newTrx);
       if (statusBayar === 'Kasbon') {
         appData.kasbon.unshift({ id: 'KSB-' + Date.now().toString().slice(-6), tanggal: now.toISOString().slice(0, 10), pelanggan, noHp: '-', hutang: grandTotal, status: 'Belum Lunas' });
       }
 
-      alert('Transaksi berhasil!');
-      cart = []; document.getElementById('cart-pelanggan').value = '';
-      calculateDashboardMetrics(); saveData(); renderAllViews();
+      cart = []; document.getElementById('cart-pelanggan').value = ''; document.getElementById('cart-uang-bayar').value = '';
+      renderCart(); calculateDashboardMetrics(); saveData(); renderAllViews();
+      bukaStrukTransaksi(newTrxId);
     }
 
     function switchKasirMode(mode) {
@@ -1126,7 +1177,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div><label class="block text-[10px] font-bold text-slate-400 mb-1">Paket</label><input type="text" class="dig-nama w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white" placeholder="Bulanan/Harian"></div>
               <div><label class="block text-[10px] font-bold text-slate-400 mb-1">Keterangan</label><input type="text" class="dig-tujuan w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white" placeholder="Nama/Kode"></div>
-              <div><label class="block text-[10px] font-bold text-emerald-400 mb-1">Laba (Rp)</label><input type="hidden" class="dig-modal" value="0"><input type="number" class="dig-jual w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-bold" placeholder="100000" oninput="hitungTotalDigital()"></div>
+              <div><label class="block text-[10px] font-bold text-emerald-400 mb-1">Laba (Rp)</label><input type="hidden" class="dig-modal" value="0"><input type="text" class="dig-jual w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-bold" oninput="formatInputRibuan(this); hitungTotalDigital();" placeholder="100.000"></div>
             </div>
           </div>`;
       }
@@ -1136,8 +1187,8 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div><label class="block text-[10px] font-bold text-slate-400 mb-1">Layanan</label><input type="text" class="dig-nama w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white" placeholder="Telkomsel 10rb"></div>
             <div><label class="block text-[10px] font-bold text-slate-400 mb-1">No Tujuan</label><input type="text" class="dig-tujuan w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white" placeholder="0812..."></div>
-            <div><label class="block text-[10px] font-bold text-slate-400 mb-1">Modal (Rp)</label><input type="number" class="dig-modal w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white" placeholder="0" oninput="hitungTotalDigital()"></div>
-            <div><label class="block text-[10px] font-bold text-slate-400 mb-1">Jual (Rp)</label><input type="number" class="dig-jual w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white" placeholder="0" oninput="hitungTotalDigital()"></div>
+            <div><label class="block text-[10px] font-bold text-slate-400 mb-1">Modal (Rp)</label><input type="text" class="dig-modal w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-bold" oninput="formatInputRibuan(this); hitungTotalDigital();" placeholder="0"></div>
+            <div><label class="block text-[10px] font-bold text-slate-400 mb-1">Jual (Rp)</label><input type="text" class="dig-jual w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-bold" oninput="formatInputRibuan(this); hitungTotalDigital();" placeholder="0"></div>
           </div>
         </div>`;
     }
@@ -1156,83 +1207,101 @@
     function hitungTotalDigital() {
       let grandTotal = 0, grandModal = 0;
       document.querySelectorAll('.digital-item-row').forEach(r => {
-        grandModal += currentKasirMode === 'wifi' ? 0 : (Number(r.querySelector('.dig-modal').value) || 0);
-        grandTotal += Number(r.querySelector('.dig-jual').value) || 0;
+        grandModal += currentKasirMode === 'wifi' ? 0 : parseRupiah(r.querySelector('.dig-modal').value);
+        grandTotal += parseRupiah(r.querySelector('.dig-jual').value);
       });
       document.getElementById('dig-grand-total').innerText = formatRupiah(grandTotal);
       document.getElementById('dig-grand-laba').innerText = formatRupiah(grandTotal - grandModal);
+      hitungKembalianDig();
+    }
+
+    function hitungKembalianDig() {
+      const rows = document.querySelectorAll('.digital-item-row');
+      let grandTotal = 0;
+      rows.forEach(r => grandTotal += parseRupiah(r.querySelector('.dig-jual').value));
+      const uangBayar = parseRupiah(document.getElementById('dig-uang-bayar').value);
+      const kembalian = uangBayar - grandTotal;
+      document.getElementById('dig-kembalian-text').innerText = formatRupiah(kembalian >= 0 ? kembalian : 0);
     }
 
     async function prosesCheckoutDigital() {
       const rows = document.querySelectorAll('.digital-item-row');
       const pelanggan = document.getElementById('dig-pelanggan').value || 'Umum';
       const statusBayar = document.getElementById('dig-status-bayar').value;
+      const uangBayar = parseRupiah(document.getElementById('dig-uang-bayar').value);
       const kategoriMap = { 'pulsa': 'Pulsa & Data', 'ppob': 'PPOB', 'atm': 'Mini ATM', 'game': 'Game', 'wifi': 'WiFi' };
       const kategoriTrx = kategoriMap[currentKasirMode] || 'Digital';
 
+      let totalJualAll = 0;
+      rows.forEach(r => totalJualAll += parseRupiah(r.querySelector('.dig-jual').value));
+
+      if (statusBayar === 'Lunas' && uangBayar < totalJualAll) {
+        alert('Uang diterima kurang dari total pembayaran!'); return;
+      }
+
       let items = [];
       rows.forEach(r => {
+        const modal = currentKasirMode === 'wifi' ? 0 : parseRupiah(r.querySelector('.dig-modal').value);
+        const jual = parseRupiah(r.querySelector('.dig-jual').value);
         items.push({
           kategori: kategoriTrx,
           detail: `${r.querySelector('.dig-nama').value} (${r.querySelector('.dig-tujuan').value || '-'})`,
-          modal: currentKasirMode === 'wifi' ? 0 : (Number(r.querySelector('.dig-modal').value) || 0),
-          jual: Number(r.querySelector('.dig-jual').value) || 0,
-          untung: (Number(r.querySelector('.dig-jual').value) || 0) - (currentKasirMode === 'wifi' ? 0 : (Number(r.querySelector('.dig-modal').value) || 0)),
-          qty: 1, pelanggan, statusBayar
+          modal: modal, jual: jual, untung: jual - modal, qty: 1, pelanggan, statusBayar
         });
       });
-
-      if (GAS_API_URL) {
-        for (let item of items) { await sendToGoogleSheets('prosesTransaksi', { data: item }); }
-        document.getElementById('dig-pelanggan').value = ''; resetDigitalRows(); return;
-      }
 
       const now = new Date();
-      items.forEach(item => {
-        appData.transaksi.unshift({
-          id: 'TRX-' + Date.now().toString().slice(-6),
-          timestamp: now.toISOString().slice(0, 10) + ' ' + now.toTimeString().slice(0, 5),
-          ...item
-        });
-        if (item.statusBayar === 'Kasbon') {
-          appData.kasbon.unshift({ id: 'KSB-' + Date.now().toString().slice(-6), tanggal: now.toISOString().slice(0, 10), pelanggan, noHp: '-', hutang: item.jual, status: 'Belum Lunas' });
-        }
-      });
+      const newTrxId = 'TRX-' + Date.now().toString().slice(-6);
+      let detailGabung = items.map(i => i.detail).join(', ');
+      let grandJual = items.reduce((a, b) => a + b.jual, 0);
+      let grandModal = items.reduce((a, b) => a + b.modal, 0);
 
-      alert('Transaksi digital berhasil!');
-      document.getElementById('dig-pelanggan').value = ''; resetDigitalRows();
-      calculateDashboardMetrics(); saveData(); renderAllViews();
-    }
+      const masterTrx = {
+        id: newTrxId,
+        timestamp: now.toISOString().slice(0, 10) + ' ' + now.toTimeString().slice(0, 5),
+        kategori: kategoriTrx, detail: detailGabung, qty: items.length, modal: grandModal, jual: grandJual, untung: grandJual - grandModal, status: statusBayar, pelanggan, bayar: uangBayar, kembalian: Math.max(0, uangBayar - grandJual)
+      };
 
-    function handleExcelImport(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) { parseCSVAndFillDigital(e.target.result); };
-      reader.readAsText(file);
-    }
-
-    function parseCSVAndFillDigital(csvText) {
-      const lines = csvText.split(/\r\n|\n/).filter(l => l.trim() !== '');
-      if (lines.length <= 1) return;
-      const container = document.getElementById('digital-items-list');
-      container.innerHTML = '';
-      for (let i = 1; i < lines.length; i++) {
-        const cols = lines[i].split(/,|\t/);
-        if (cols.length < 2) continue;
-        container.insertAdjacentHTML('beforeend', `
-          <div class="digital-item-row bg-slate-900/60 p-4 rounded-2xl border border-slate-800 space-y-3">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div><label class="block text-[10px] font-bold text-slate-400 mb-1">Layanan</label><input type="text" value="${cols[0] || ''}" class="dig-nama w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white"></div>
-              <div><label class="block text-[10px] font-bold text-slate-400 mb-1">Tujuan</label><input type="text" value="${cols[1] || ''}" class="dig-tujuan w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white"></div>
-              <div><label class="block text-[10px] font-bold text-slate-400 mb-1">Modal</label><input type="number" value="${cols[2] || 0}" class="dig-modal w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white" oninput="hitungTotalDigital()"></div>
-              <div><label class="block text-[10px] font-bold text-slate-400 mb-1">Jual</label><input type="number" value="${cols[3] || 0}" class="dig-jual w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white" oninput="hitungTotalDigital()"></div>
-            </div>
-          </div>`);
+      appData.transaksi.unshift(masterTrx);
+      if (statusBayar === 'Kasbon') {
+        appData.kasbon.unshift({ id: 'KSB-' + Date.now().toString().slice(-6), tanggal: now.toISOString().slice(0, 10), pelanggan, noHp: '-', hutang: grandJual, status: 'Belum Lunas' });
       }
-      hitungTotalDigital();
+
+      document.getElementById('dig-pelanggan').value = ''; document.getElementById('dig-uang-bayar').value = '';
+      resetDigitalRows(); calculateDashboardMetrics(); saveData(); renderAllViews();
+      bukaStrukTransaksi(newTrxId);
     }
 
+    // ================= MODAL STRUK & BAGIKAN JPG =================
+    function bukaStrukTransaksi(idTrx) {
+      const trx = appData.transaksi.find(t => t.id === idTrx);
+      if (!trx) return;
+
+      document.getElementById('struk-id').innerText = trx.id;
+      document.getElementById('struk-waktu').innerText = trx.timestamp;
+      document.getElementById('struk-pelanggan').innerText = trx.pelanggan;
+      document.getElementById('struk-items-list').innerHTML = `
+        <div class="flex justify-between"><span>${trx.detail}</span><span>${formatRupiah(trx.jual)}</span></div>
+      `;
+      document.getElementById('struk-total').innerText = formatRupiah(trx.jual);
+      document.getElementById('struk-bayar').innerText = formatRupiah(trx.bayar || trx.jual);
+      document.getElementById('struk-kembali').innerText = formatRupiah(trx.kembalian || 0);
+      document.getElementById('modal-struk').classList.remove('hidden');
+    }
+
+    function tutupModalStruk() { document.getElementById('modal-struk').classList.add('hidden'); }
+
+    async function bagikanStrukJPG() {
+      const element = document.getElementById('print-area');
+      element.style.display = 'block';
+      const canvas = await html2canvas(element, { scale: 2 });
+      const link = document.createElement('a');
+      link.download = `Struk-${Date.now()}.jpg`;
+      link.href = canvas.toDataURL('image/jpeg');
+      link.click();
+    }
+
+    // ================= PRODUK & STOK =================
     function renderTabelProduk() {
       const tbody = document.getElementById('tabel-produk-body');
       tbody.innerHTML = '';
@@ -1279,55 +1348,40 @@
       document.getElementById('prod-id').value = p.id;
       document.getElementById('prod-kategori').value = p.kategori;
       document.getElementById('prod-nama').value = p.nama;
-      document.getElementById('prod-modal').value = p.modal;
-      document.getElementById('prod-jual').value = p.jual;
+      document.getElementById('prod-modal').value = p.modal ? p.modal.toLocaleString('id-ID') : '';
+      document.getElementById('prod-jual').value = p.jual ? p.jual.toLocaleString('id-ID') : '';
       document.getElementById('prod-stok').value = p.stok;
       document.getElementById('modal-produk').classList.remove('hidden');
     }
 
     async function hapusProduk(id) {
       if (!confirm('Hapus produk ini?')) return;
-      if (GAS_API_URL) { await sendToGoogleSheets('hapusProduk', { id }); return; }
       appData.produk = appData.produk.filter(p => p.id !== id);
       calculateDashboardMetrics(); saveData(); renderAllViews();
-    }
-
-    function openCameraForProduct() { document.getElementById('prod-camera-input').click(); }
-    function handleCameraCapture(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) { document.getElementById('prod-gambar').value = e.target.result; };
-      reader.readAsDataURL(file);
     }
 
     async function simpanDataProduk() {
       const id = document.getElementById('prod-id').value.trim();
       const kategori = document.getElementById('prod-kategori').value;
       const nama = document.getElementById('prod-nama').value.trim();
-      const gambar = document.getElementById('prod-gambar').value.trim();
-      const modal = Number(document.getElementById('prod-modal').value) || 0;
-      const jual = Number(document.getElementById('prod-jual').value) || 0;
+      const modal = parseRupiah(document.getElementById('prod-modal').value);
+      const jual = parseRupiah(document.getElementById('prod-jual').value);
       const stok = Number(document.getElementById('prod-stok').value) || 0;
 
       if (!nama || !jual) { alert('Nama dan harga jual wajib diisi!'); return; }
-      if (GAS_API_URL) {
-        closeModalProduk();
-        await sendToGoogleSheets('simpanProduk', { data: { id, kategori, nama, gambar, modal, jual, stok } });
-        return;
-      }
 
       if (id) {
         const existing = appData.produk.find(p => p.id === id);
-        if (existing) Object.assign(existing, { kategori, nama, gambar, modal, jual, stok });
-        else appData.produk.push({ id, kategori, nama, gambar, modal, jual, stok });
+        if (existing) Object.assign(existing, { kategori, nama, modal, jual, stok });
+        else appData.produk.push({ id, kategori, nama, modal, jual, stok });
       } else {
-        appData.produk.push({ id: 'PRD-' + Math.floor(1000 + Math.random() * 9000), kategori, nama, gambar, modal, jual, stok });
+        appData.produk.push({ id: 'PRD-' + Math.floor(1000 + Math.random() * 9000), kategori, nama, modal, jual, stok });
       }
 
       closeModalProduk(); calculateDashboardMetrics(); saveData(); renderAllViews();
     }
 
+    // ================= SERVIS PC (EDIT, CETAK/BAGIKAN STRUK, HAPUS) =================
     function renderTabelServis() {
       const tbody = document.getElementById('tabel-servis-body');
       tbody.innerHTML = '';
@@ -1336,6 +1390,13 @@
         return;
       }
       appData.servis.forEach(s => {
+        let aksiExtra = '';
+        if (s.status === 'Diambil' || s.status === 'Selesai') {
+          aksiExtra = `
+            <button onclick="bukaStrukServis('${s.id}')" class="p-2 bg-emerald-500/20 text-emerald-400 rounded-xl" title="Cetak/Bagikan Struk Servis"><i class="fas fa-print"></i></button>
+          `;
+        }
+
         tbody.innerHTML += `
           <tr class="hover:bg-slate-900/60 transition">
             <td class="py-3 px-4"><div class="font-bold text-white">${s.id}</div><div class="text-[10px] text-slate-500">${s.tanggal}</div></td>
@@ -1343,46 +1404,79 @@
             <td class="py-3 px-4 font-bold text-blue-400">${s.perangkat}</td>
             <td class="py-3 px-4 text-slate-300">${s.keluhan}</td>
             <td class="py-3 px-4 text-right font-bold text-white">${formatRupiah(s.biaya)}</td>
-            <td class="py-3 px-4 text-center"><span class="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-slate-800 text-slate-300">${s.status}</span></td>
             <td class="py-3 px-4 text-center">
               <select onchange="updateStatusServis('${s.id}', this.value)" class="bg-slate-900 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-white">
                 <option value="Antre" ${s.status === 'Antre' ? 'selected' : ''}>Antre</option>
                 <option value="Proses" ${s.status === 'Proses' ? 'selected' : ''}>Proses</option>
                 <option value="Selesai" ${s.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
-                <option value="Diambil" ${s.status === 'Diambil' ? 'selected' : ''}>Diambil</option>
+                <option value="Diambil" ${s.status === 'Diambil' ? 'selected' : ''}>Diambil (Lunas)</option>
               </select>
+            </td>
+            <td class="py-3 px-4 text-center flex items-center justify-center gap-1.5">
+              ${aksiExtra}
+              <button onclick="editServis('${s.id}')" class="p-2 bg-slate-800 text-slate-300 rounded-xl" title="Edit Servis"><i class="fas fa-edit"></i></button>
+              <button onclick="hapusServis('${s.id}')" class="p-2 bg-rose-500/10 text-rose-400 rounded-xl" title="Hapus Servis"><i class="fas fa-trash"></i></button>
             </td>
           </tr>`;
       });
     }
 
-    function openModalServis() { document.getElementById('modal-servis').classList.remove('hidden'); }
+    function openModalServis() {
+      document.getElementById('modal-servis-title').innerText = 'Input Servis Laptop / PC Masuk';
+      document.getElementById('srv-edit-id').value = '';
+      document.getElementById('srv-pelanggan').value = '';
+      document.getElementById('srv-nohp').value = '';
+      document.getElementById('srv-perangkat').value = '';
+      document.getElementById('srv-keluhan').value = '';
+      document.getElementById('srv-biaya').value = '';
+      document.getElementById('modal-servis').classList.remove('hidden');
+    }
+
     function closeModalServis() { document.getElementById('modal-servis').classList.add('hidden'); }
 
+    function editServis(id) {
+      const s = appData.servis.find(item => item.id === id);
+      if (!s) return;
+      document.getElementById('modal-servis-title').innerText = 'Edit Data Servis';
+      document.getElementById('srv-edit-id').value = s.id;
+      document.getElementById('srv-pelanggan').value = s.pelanggan;
+      document.getElementById('srv-nohp').value = s.noHp;
+      document.getElementById('srv-perangkat').value = s.perangkat;
+      document.getElementById('srv-keluhan').value = s.keluhan;
+      document.getElementById('srv-biaya').value = s.biaya ? s.biaya.toLocaleString('id-ID') : '';
+      document.getElementById('modal-servis').classList.remove('hidden');
+    }
+
+    async function hapusServis(id) {
+      if (!confirm('Hapus data servis ini?')) return;
+      appData.servis = appData.servis.filter(s => s.id !== id);
+      saveData(); renderAllViews();
+    }
+
     async function simpanDataServis() {
+      const editId = document.getElementById('srv-edit-id').value;
       const pelanggan = document.getElementById('srv-pelanggan').value.trim();
       const noHp = document.getElementById('srv-nohp').value.trim();
       const perangkat = document.getElementById('srv-perangkat').value.trim();
       const keluhan = document.getElementById('srv-keluhan').value.trim();
-      const biaya = Number(document.getElementById('srv-biaya').value) || 0;
+      const biaya = parseRupiah(document.getElementById('srv-biaya').value);
 
       if (!pelanggan || !perangkat || !biaya) { alert('Lengkapi data servis!'); return; }
-      if (GAS_API_URL) {
-        closeModalServis();
-        await sendToGoogleSheets('tambahServis', { data: { pelanggan, noHp, perangkat, keluhan, biaya } });
-        return;
-      }
 
-      appData.servis.unshift({
-        id: 'SRV-' + Date.now().toString().slice(-6),
-        tanggal: new Date().toISOString().slice(0, 10),
-        pelanggan, noHp, perangkat, keluhan, biaya, status: 'Antre'
-      });
+      if (editId) {
+        const s = appData.servis.find(item => item.id === editId);
+        if (s) Object.assign(s, { pelanggan, noHp, perangkat, keluhan, biaya });
+      } else {
+        appData.servis.unshift({
+          id: 'SRV-' + Date.now().toString().slice(-6),
+          tanggal: new Date().toISOString().slice(0, 10),
+          pelanggan, noHp, perangkat, keluhan, biaya, status: 'Antre'
+        });
+      }
       closeModalServis(); calculateDashboardMetrics(); saveData(); renderAllViews();
     }
 
     async function updateStatusServis(idServis, status) {
-      if (GAS_API_URL) { await sendToGoogleSheets('updateStatusServis', { id: idServis, status }); return; }
       const s = appData.servis.find(item => item.id === idServis);
       if (!s) return;
       const statusLama = s.status;
@@ -1391,12 +1485,29 @@
         appData.transaksi.unshift({
           id: 'TRX-' + Date.now().toString().slice(-6),
           timestamp: new Date().toISOString().slice(0, 10) + ' ' + new Date().toTimeString().slice(0, 5),
-          kategori: 'Servis PC/Laptop', detail: `Servis ${s.perangkat}`, qty: 1, modal: 0, jual: s.biaya, untung: s.biaya, status: 'Lunas', pelanggan: s.pelanggan
+          kategori: 'Servis PC/Laptop', detail: `Servis ${s.perangkat} (${s.keluhan})`, qty: 1, modal: 0, jual: s.biaya, untung: s.biaya, status: 'Lunas', pelanggan: s.pelanggan, bayar: s.biaya, kembalian: 0
         });
       }
       calculateDashboardMetrics(); saveData(); renderAllViews();
     }
 
+    function bukaStrukServis(idServis) {
+      const s = appData.servis.find(item => item.id === idServis);
+      if (!s) return;
+
+      document.getElementById('struk-id').innerText = s.id;
+      document.getElementById('struk-waktu').innerText = s.tanggal;
+      document.getElementById('struk-pelanggan').innerText = s.pelanggan;
+      document.getElementById('struk-items-list').innerHTML = `
+        <div class="flex justify-between"><span>Servis ${s.perangkat} (${s.keluhan})</span><span>${formatRupiah(s.biaya)}</span></div>
+      `;
+      document.getElementById('struk-total').innerText = formatRupiah(s.biaya);
+      document.getElementById('struk-bayar').innerText = formatRupiah(s.biaya);
+      document.getElementById('struk-kembali').innerText = formatRupiah(0);
+      document.getElementById('modal-struk').classList.remove('hidden');
+    }
+
+    // ================= KASBON & OPERASIONAL =================
     function renderTabelKasbon() {
       const tbody = document.getElementById('tabel-kasbon-body');
       tbody.innerHTML = '';
@@ -1419,18 +1530,17 @@
 
     async function lunasiKasbon(idKasbon) {
       if (!confirm('Lunasi kasbon ini?')) return;
-      if (GAS_API_URL) { await sendToGoogleSheets('lunasiKasbon', { id: idKasbon }); return; }
       const k = appData.kasbon.find(item => item.id === idKasbon);
       if (k) { k.status = 'Lunas'; calculateDashboardMetrics(); saveData(); renderAllViews(); }
     }
 
     function getBiayaOperasionalInput() {
       return {
-        listrik: Number(document.getElementById('biaya-listrik')?.value) || 0,
-        wifi: Number(document.getElementById('biaya-wifi')?.value) || 0,
-        pulsa: Number(document.getElementById('biaya-pulsa')?.value) || 0,
-        lainnya: Number(document.getElementById('biaya-lainnya')?.value) || 0,
-        totalBiaya: (Number(document.getElementById('biaya-listrik')?.value) || 0) + (Number(document.getElementById('biaya-wifi')?.value) || 0) + (Number(document.getElementById('biaya-pulsa')?.value) || 0) + (Number(document.getElementById('biaya-lainnya')?.value) || 0)
+        listrik: parseRupiah(document.getElementById('biaya-listrik')?.value),
+        wifi: parseRupiah(document.getElementById('biaya-wifi')?.value),
+        pulsa: parseRupiah(document.getElementById('biaya-pulsa')?.value),
+        lainnya: parseRupiah(document.getElementById('biaya-lainnya')?.value),
+        totalBiaya: parseRupiah(document.getElementById('biaya-listrik')?.value) + parseRupiah(document.getElementById('biaya-wifi')?.value) + parseRupiah(document.getElementById('biaya-pulsa')?.value) + parseRupiah(document.getElementById('biaya-lainnya')?.value)
       };
     }
 
@@ -1441,10 +1551,6 @@
 
       document.getElementById('ops-total-biaya-label').innerText = formatRupiah(opsBiaya.totalBiaya);
       document.getElementById('ops-laba-bersih-bagi').innerText = formatRupiah(labaBersihBagi);
-
-      const gaji = (labaBersihBagi * (Number(document.getElementById('pct-gaji').value) || 0)) / 100;
-      const tabungan = (labaBersihBagi * (Number(document.getElementById('pct-tabungan').value) || 0)) / 100;
-      const modal = (labaBersihBagi * (Number(document.getElementById('pct-modal').value) || 0)) / 100;
     }
 
     async function simpanAlokasi() {
@@ -1462,8 +1568,6 @@
         modal: (labaBersihBagi * Number(document.getElementById('pct-modal').value)) / 100,
         total: opsBiaya.totalBiaya + labaBersihBagi
       };
-
-      if (GAS_API_URL) { await sendToGoogleSheets('simpanAlokasiLaba', { data: payload }); return; }
 
       appData.operasional.unshift({ id: 'OPS-' + Date.now().toString().slice(-6), tanggal: new Date().toISOString().slice(0, 10), ...payload });
       alert('Alokasi tersimpan!');
@@ -1516,24 +1620,6 @@
       } else {
         document.getElementById('barcode-scanner-modal').classList.add('hidden');
       }
-    }
-
-    function cetakStruk(idTrx) {
-      const trx = appData.transaksi.find(t => t.id === idTrx);
-      if (!trx) return;
-      document.getElementById('print-area').innerHTML = `
-        <div style="width: 300px; font-family: monospace; font-size: 12px; padding: 15px; background: #fff; color: #000; margin: 0 auto;">
-          <div style="text-align: center; font-weight: bold; font-size: 16px;">ALPHA KASIR</div>
-          <div style="text-align: center; font-size: 10px; margin-bottom: 10px;">Multi-Layanan</div>
-          <div>ID : ${trx.id}</div>
-          <div>Waktu : ${trx.timestamp}</div>
-          <div>Pelanggan : ${trx.pelanggan}</div>
-          <hr style="border-top: 1px dashed #000; margin: 8px 0;">
-          <div><b>${trx.detail}</b></div>
-          <hr style="border-top: 1px dashed #000; margin: 8px 0;">
-          <div style="display: flex; justify-content: space-between; font-weight: bold;"><span>TOTAL:</span><span>${formatRupiah(trx.jual)}</span></div>
-        </div>`;
-      window.print();
     }
   </script>
 </body>
