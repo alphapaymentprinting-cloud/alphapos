@@ -1093,6 +1093,19 @@
       reader.readAsText(file);
     }
 
+    function exportDataExcel() {
+      let csv = 'ID,Timestamp,Kategori,Detail,Qty,Modal,Jual,Untung,Status,Pelanggan\n';
+      appData.transaksi.forEach(t => {
+        csv += `"${t.id}","${t.timestamp}","${t.kategori}","${t.detail}",${t.qty},${t.modal},${t.jual},${t.untung},"${t.status}","${t.pelanggan}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Riwayat-Transaksi-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+    }
+
     // ================= KASIR PENJUALAN =================
     function renderKasirDropdowns() { filterProdukKasirList(); renderCart(); }
 
