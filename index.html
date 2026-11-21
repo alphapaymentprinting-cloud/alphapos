@@ -306,23 +306,7 @@
                 <button onclick="openBarcodeScanner('kasir')" class="px-4 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-orange-400 border border-slate-700 font-bold text-xs transition flex items-center justify-center gap-2">
                   <i class="fas fa-barcode"></i> Scan
                 </button>
-                <button onclick="openCameraForTrxFisik()" class="px-4 py-3 rounded-2xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 font-bold text-xs transition flex items-center justify-center gap-2">
-                  <i class="fas fa-camera"></i> Foto Barang
-                </button>
-                <input type="file" id="trx-fisik-camera-input" accept="image/*" capture="environment" class="hidden" onchange="handleTrxFisikCamera(event)">
               </div>
-            </div>
-
-            <!-- Pratinjau Foto Bukti Barang Transaksi Fisik (jika diambil dari kamera) -->
-            <div id="trx-fisik-foto-preview-box" class="hidden bg-slate-900/80 p-3 rounded-2xl border border-emerald-500/30 flex items-center justify-between gap-3">
-              <div class="flex items-center gap-3">
-                <img id="trx-fisik-foto-img" src="" class="w-14 h-14 rounded-xl object-cover border border-slate-700">
-                <div>
-                  <span class="text-xs font-bold text-emerald-400 block">Foto Barang Terlampir</span>
-                  <span class="text-[10px] text-slate-400">Foto akan tersimpan bersama transaksi ini</span>
-                </div>
-              </div>
-              <button onclick="hapusFotoTrxFisik()" class="p-2 bg-rose-500/20 text-rose-400 rounded-xl text-xs font-bold">Hapus</button>
             </div>
 
             <div id="grid-produk-fisik" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[420px] overflow-y-auto custom-scrollbar pr-1"></div>
@@ -737,9 +721,6 @@
         <div class="flex justify-between"><span>Pelanggan:</span><span id="struk-pelanggan">-</span></div>
       </div>
       <div id="struk-items-list" class="text-xs space-y-1 text-slate-800 max-h-36 overflow-y-auto"></div>
-      <div id="struk-foto-box" class="hidden pt-2 text-center">
-        <img id="struk-foto-img" src="" class="w-24 h-24 object-cover mx-auto rounded-lg border border-slate-300">
-      </div>
       <div class="border-t border-dashed border-slate-300 pt-2 text-xs space-y-1 text-slate-800">
         <div class="flex justify-between font-bold"><span>Total:</span><span id="struk-total">Rp 0</span></div>
         <div class="flex justify-between"><span>Bayar:</span><span id="struk-bayar">Rp 0</span></div>
@@ -789,7 +770,6 @@
     let currentKasirMode = 'fisik';
     let html5QrCode = null;
     let currentScanTarget = 'kasir';
-    let currentTrxFisikFotoBase64 = '';
 
     window.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('#current-date-str').forEach(el => el.innerText = new Date().toLocaleDateString('id-ID', { dateStyle: 'full' }));
@@ -991,13 +971,12 @@
       }
 
       filtered.forEach(t => {
-        const fotoIcon = t.foto ? `<span class="ml-1 text-emerald-400" title="Ada Lampiran Foto"><i class="fas fa-image"></i></span>` : '';
         tbody.innerHTML += `
           <tr class="hover:bg-slate-900/60 transition">
             <td class="py-3 px-3 text-center"><input type="checkbox" class="trx-checkbox rounded bg-slate-900 border-slate-700" value="${t.id}"></td>
             <td class="py-3 px-3"><div class="font-bold text-white">${t.timestamp}</div><div class="text-[10px] text-slate-500">${t.id}</div></td>
             <td class="py-3 px-3"><span class="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-slate-800 text-orange-400">${t.kategori}</span></td>
-            <td class="py-3 px-3 font-medium text-white">${t.detail} ${fotoIcon} <span class="text-slate-500 block text-[10px]">${t.pelanggan}</span></td>
+            <td class="py-3 px-3 font-medium text-white">${t.detail} <span class="text-slate-500 block text-[10px]">${t.pelanggan}</span></td>
             <td class="py-3 px-3 text-center">${t.qty}</td>
             <td class="py-3 px-3 text-right font-bold text-white">${formatRupiah(t.jual)}</td>
             <td class="py-3 px-3 text-right font-bold text-emerald-400">${formatRupiah(t.untung)}</td>
@@ -1083,27 +1062,7 @@
       reader.readAsText(file);
     }
 
-    // ================= KASIR PENJUALAN & FOTO KAMERA TRANSAKSI FISIK =================
-    function openCameraForTrxFisik() {
-      document.getElementById('trx-fisik-camera-input').click();
-    }
-
-    function handleTrxFisikCamera(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      compressCameraImage(file, 500, (base64Img) => {
-        currentTrxFisikFotoBase64 = base64Img;
-        document.getElementById('trx-fisik-foto-img').src = base64Img;
-        document.getElementById('trx-fisik-foto-preview-box').classList.remove('hidden');
-      });
-    }
-
-    function hapusFotoTrxFisik() {
-      currentTrxFisikFotoBase64 = '';
-      document.getElementById('trx-fisik-camera-input').value = '';
-      document.getElementById('trx-fisik-foto-preview-box').classList.add('hidden');
-    }
-
+    // ================= KASIR PENJUALAN =================
     function renderKasirDropdowns() { filterProdukKasirList(); renderCart(); }
 
     function filterProdukKasirList() {
@@ -1218,7 +1177,7 @@
       const newTrx = {
         id: newTrxId,
         timestamp: now.toISOString().slice(0, 10) + ' ' + now.toTimeString().slice(0, 5),
-        kategori: 'Fisik', detail: detailNames.join(', '), qty: grandQty, modal: grandModal, jual: grandTotal, untung: grandTotal - grandModal, status: statusBayar, pelanggan, bayar: uangBayar, kembalian: Math.max(0, uangBayar - grandTotal), foto: currentTrxFisikFotoBase64
+        kategori: 'Fisik', detail: detailNames.join(', '), qty: grandQty, modal: grandModal, jual: grandTotal, untung: grandTotal - grandModal, status: statusBayar, pelanggan, bayar: uangBayar, kembalian: Math.max(0, uangBayar - grandTotal)
       };
 
       appData.transaksi.unshift(newTrx);
@@ -1227,7 +1186,7 @@
       }
 
       cart = []; document.getElementById('cart-pelanggan').value = ''; document.getElementById('cart-uang-bayar').value = '';
-      hapusFotoTrxFisik(); renderCart(); calculateDashboardMetrics(); saveData(); renderAllViews();
+      renderCart(); calculateDashboardMetrics(); saveData(); renderAllViews();
       bukaStrukTransaksi(newTrxId);
     }
 
@@ -1366,12 +1325,6 @@
       document.getElementById('struk-items-list').innerHTML = `
         <div class="flex justify-between"><span>${trx.detail}</span><span>${formatRupiah(trx.jual)}</span></div>
       `;
-      if (trx.foto) {
-        document.getElementById('struk-foto-img').src = trx.foto;
-        document.getElementById('struk-foto-box').classList.remove('hidden');
-      } else {
-        document.getElementById('struk-foto-box').classList.add('hidden');
-      }
       document.getElementById('struk-total').innerText = formatRupiah(trx.jual);
       document.getElementById('struk-bayar').innerText = formatRupiah(trx.bayar || trx.jual);
       document.getElementById('struk-kembali').innerText = formatRupiah(trx.kembalian || 0);
@@ -1621,7 +1574,6 @@
       document.getElementById('struk-items-list').innerHTML = `
         <div class="flex justify-between"><span>Servis ${s.perangkat} (${s.keluhan})</span><span>${formatRupiah(s.biaya)}</span></div>
       `;
-      document.getElementById('struk-foto-box').classList.add('hidden');
       document.getElementById('struk-total').innerText = formatRupiah(s.biaya);
       document.getElementById('struk-bayar').innerText = formatRupiah(s.biaya);
       document.getElementById('struk-kembali').innerText = formatRupiah(0);
