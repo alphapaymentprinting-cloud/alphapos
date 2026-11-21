@@ -234,25 +234,32 @@
               <p class="text-xs text-slate-400">Kelola riwayat penjualan, migrasi data, dan hapus massal.</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <label class="text-xs font-semibold text-slate-400">Filter Bulan:</label>
-              <input type="month" id="filter-bulan" onchange="renderDashboardRiwayat()" class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-orange-500 font-medium">
-              <button onclick="resetFilterBulan()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition">Semua</button>
+              <!-- Filter Bulan -->
+              <div class="flex items-center gap-1.5 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5">
+                <span class="text-[11px] font-semibold text-slate-400">Bulan:</span>
+                <input type="month" id="filter-bulan" onchange="renderDashboardRiwayat()" class="bg-transparent text-xs text-white focus:outline-none font-medium">
+              </div>
+              <button onclick="resetFilterBulan()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition">Semua</button>
               
-              <!-- Tombol Export Excel -->
-              <button onclick="exportDataExcel()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition flex items-center gap-1.5 shadow">
+              <div class="h-5 w-[1px] bg-slate-800 mx-1 hidden sm:block"></div>
+
+              <!-- Tombol Export Excel (Ramping) -->
+              <button onclick="exportDataExcel()" class="px-3 py-1.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 font-bold text-xs transition flex items-center gap-1.5">
                 <i class="fas fa-file-excel"></i> Export
               </button>
 
-              <!-- Tombol Download Template Import (BARU) -->
-              <button onclick="downloadTemplateImport()" class="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition flex items-center gap-1.5 shadow">
-                <i class="fas fa-download"></i> Template Import
+              <!-- Tombol Download Template Import (Ramping) -->
+              <button onclick="downloadTemplateImport()" class="px-3 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-400 border border-purple-500/30 font-bold text-xs transition flex items-center gap-1.5">
+                <i class="fas fa-download"></i> Template
               </button>
 
-              <!-- Tombol Upload/Import -->
-              <label class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition cursor-pointer flex items-center gap-1.5 shadow">
+              <!-- Tombol Import File (Ramping) -->
+              <label class="px-3 py-1.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 font-bold text-xs transition cursor-pointer flex items-center gap-1.5">
                 <i class="fas fa-file-arrow-up"></i> Import <input type="file" accept=".csv,.txt" onchange="importDataExcel(event)" class="hidden">
               </label>
-              <button onclick="hapusTransaksiMasal()" class="px-3.5 py-2 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 font-bold text-xs transition flex items-center gap-1.5">
+
+              <!-- Tombol Hapus Terpilih (Ramping) -->
+              <button onclick="hapusTransaksiMasal()" class="px-3 py-1.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 font-bold text-xs transition flex items-center gap-1.5">
                 <i class="fas fa-trash-alt"></i> Hapus Terpilih
               </button>
             </div>
@@ -1097,34 +1104,54 @@
     function importDataExcel(event) {
       const file = event.target.files[0];
       if (!file) return;
+      
       const reader = new FileReader();
       reader.onload = function(e) {
-        const lines = e.target.result.split(/\r\n|\n/).filter(l => l.trim() !== '');
-        if (lines.length <= 1) { alert('File kosong atau format tidak valid.'); return; }
+        const text = e.target.result;
+        const lines = text.split(/\r\n|\n/).filter(l => l.trim() !== '');
+        
+        if (lines.length <= 1) { 
+          alert('File CSV kosong atau format tidak valid.'); 
+          return; 
+        }
         
         let importedCount = 0;
+        const delimiter = lines[0].includes(';') ? ';' : ',';
+
         for (let i = 1; i < lines.length; i++) {
-          const cols = lines[i].split(/,|\t/);
+          const cols = lines[i].split(delimiter).map(val => val.replace(/^["'](.*)["']$/, '$1').trim());
+          
           if (cols.length >= 7) {
+            const modal = Number(cols[5]) || 0;
+            const jual = Number(cols[6]) || 0;
+            // Jika kolom Keuntungan (indeks 7) kosong, hitung otomatis dari Harga Jual - Harga Modal
+            const untung = cols[7] !== '' && !isNaN(cols[7]) ? Number(cols[7]) : (jual - modal);
+
             appData.transaksi.unshift({
-              id: cols[0] ? cols[0].replace(/['"]+/g, '').trim() : 'TRX-' + Date.now() + i,
-              timestamp: cols[1] ? cols[1].replace(/['"]+/g, '').trim() : new Date().toISOString().slice(0, 10),
-              kategori: cols[2] ? cols[2].replace(/['"]+/g, '').trim() : 'Import',
-              detail: cols[3] ? cols[3].replace(/['"]+/g, '').trim() : 'Data Migrasi',
+              id: cols[0] || 'TRX-' + Date.now() + i,
+              timestamp: cols[1] || new Date().toISOString().slice(0, 10) + ' ' + new Date().toTimeString().slice(0, 5),
+              kategori: cols[2] || 'Fisik',
+              detail: cols[3] || 'Import Data',
               qty: Number(cols[4]) || 1,
-              modal: Number(cols[5]) || 0,
-              jual: Number(cols[6]) || 0,
-              untung: Number(cols[7]) || ((Number(cols[6]) || 0) - (Number(cols[5]) || 0)),
-              status: cols[8] ? cols[8].replace(/['"]+/g, '').trim() : 'Lunas',
-              pelanggan: cols[9] ? cols[9].replace(/['"]+/g, '').trim() : 'Umum'
+              modal: modal,
+              jual: jual,
+              untung: untung,
+              status: cols[8] || 'Lunas',
+              pelanggan: cols[9] || 'Umum'
             });
             importedCount++;
           }
         }
-        calculateDashboardMetrics(); saveData(); renderAllViews();
+
+        calculateDashboardMetrics(); 
+        saveData(); 
+        renderAllViews();
+        
+        event.target.value = '';
         alert(`Berhasil mengimport ${importedCount} data transaksi ke Riwayat Transaksi!`);
       };
-      reader.readAsText(file);
+      
+      reader.readAsText(file, 'UTF-8');
     }
 
     function exportDataExcel() {
