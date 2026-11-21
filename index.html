@@ -6,6 +6,7 @@
   <title>ALPHA - Kasir & Manajemen Multi-Layanan</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -233,34 +234,35 @@
               <h3 class="text-base font-bold text-white">Riwayat Transaksi</h3>
               <p class="text-xs text-slate-400">Kelola riwayat penjualan, migrasi data, dan hapus massal.</p>
             </div>
-            <div class="flex flex-wrap items-center gap-2">
+            <div class="flex items-center gap-1.5 overflow-x-auto py-1">
               <!-- Filter Bulan -->
-              <div class="flex items-center gap-1.5 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5">
-                <span class="text-[11px] font-semibold text-slate-400">Bulan:</span>
-                <input type="month" id="filter-bulan" onchange="renderDashboardRiwayat()" class="bg-transparent text-xs text-white focus:outline-none font-medium">
+              <div class="flex items-center gap-1 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 shrink-0">
+                <span class="text-[10px] text-slate-400">Bulan:</span>
+                <input type="month" id="filter-bulan" onchange="renderDashboardRiwayat()" class="bg-transparent text-[11px] text-white focus:outline-none">
               </div>
-              <button onclick="resetFilterBulan()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition">Semua</button>
+              <button onclick="resetFilterBulan()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-[11px] transition shrink-0">Semua</button>
               
-              <div class="h-5 w-[1px] bg-slate-800 mx-1 hidden sm:block"></div>
+              <div class="h-4 w-[1px] bg-slate-800 mx-0.5 shrink-0"></div>
 
-              <!-- Tombol Export Excel (Ramping) -->
-              <button onclick="exportDataExcel()" class="px-3 py-1.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 font-bold text-xs transition flex items-center gap-1.5">
-                <i class="fas fa-file-excel"></i> Export
+              <!-- Tombol Export Excel (Logo Excel) -->
+              <button onclick="exportDataExcel()" class="w-8 h-8 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 flex items-center justify-center transition shrink-0" title="Export Excel">
+                <i class="fas fa-file-excel text-xs"></i>
               </button>
 
-              <!-- Tombol Download Template Import (Ramping) -->
-              <button onclick="downloadTemplateImport()" class="px-3 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-400 border border-purple-500/30 font-bold text-xs transition flex items-center gap-1.5">
-                <i class="fas fa-download"></i> Template
+              <!-- Tombol Download Template (Panah ke Bawah) -->
+              <button onclick="downloadTemplateImport()" class="w-8 h-8 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 text-purple-400 border border-purple-500/30 flex items-center justify-center transition shrink-0" title="Download Template Import">
+                <i class="fas fa-download text-xs"></i>
               </button>
 
-              <!-- Tombol Import File (Ramping) -->
-              <label class="px-3 py-1.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 font-bold text-xs transition cursor-pointer flex items-center gap-1.5">
-                <i class="fas fa-file-arrow-up"></i> Import <input type="file" accept=".csv,.txt" onchange="importDataExcel(event)" class="hidden">
+              <!-- Tombol Import File (Panah ke Atas) -->
+              <label class="w-8 h-8 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 flex items-center justify-center transition cursor-pointer shrink-0" title="Import Data Excel">
+                <i class="fas fa-upload text-xs"></i>
+                <input type="file" accept=".xlsx, .xls, .csv" onchange="importDataExcel(event)" class="hidden">
               </label>
 
-              <!-- Tombol Hapus Terpilih (Ramping) -->
-              <button onclick="hapusTransaksiMasal()" class="px-3 py-1.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 font-bold text-xs transition flex items-center gap-1.5">
-                <i class="fas fa-trash-alt"></i> Hapus Terpilih
+              <!-- Tombol Hapus Terpilih (Tempat Sampah) -->
+              <button onclick="hapusTransaksiMasal()" class="w-8 h-8 rounded-lg bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 flex items-center justify-center transition shrink-0" title="Hapus Terpilih">
+                <i class="fas fa-trash-alt text-xs"></i>
               </button>
             </div>
           </div>
@@ -1084,74 +1086,86 @@
       }
     }
 
+    // 1. Fungsi Download Template dalam format EXCEL (.xlsx) asli
     function downloadTemplateImport() {
-      // Header disamakan persis dengan format file template resmi Alpha POS.xlsx Anda
-      let csvContent = "ID Transaksi,Timestamp,Kategori,Detail Barang/Layanan,Qty,Harga Modal,Harga Jual,Keuntungan,Status Bayar,Nama Pelanggan\n";
-      
-      // Baris contoh data agar mudah dipahami saat diisi
-      csvContent += "TRX-261122001,2026-11-22 08:30,Fisik,Kabel Data Type-C (1x),1,15000,30000,15000,Lunas,Umum\n";
-      csvContent += "TRX-261122002,2026-11-22 09:15,Pulsa & Data,Telkomsel 10rb (081234567890),1,10200,12000,1800,Lunas,Budi\n";
+      // Data baris template sesuai dengan header sheet Transaksi Anda
+      const templateData = [
+        ["ID Transaksi", "Timestamp", "Kategori", "Detail Barang/Layanan", "Qty", "Harga Modal", "Harga Jual", "Keuntungan", "Status Bayar", "Nama Pelanggan"],
+        ["TRX-261122001", "2026-11-22 08:30", "Fisik", "Kabel Data Type-C (1x)", 1, 15000, 30000, "=G2-F2", "Lunas", "Umum"],
+        ["TRX-261122002", "2026-11-22 09:15", "Pulsa & Data", "Telkomsel 10rb (081234567890)", 1, 10200, 12000, "=G3-F3", "Lunas", "Budi"]
+      ];
 
-      // Menggunakan penanda BOM UTF-8 agar rapi dan tidak berantakan saat dibuka di Excel/WPS
-      const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Template_Import_Transaksi_${new Date().toISOString().slice(0, 10)}.csv`;
-      a.click();
+      // Membuat workbook dan worksheet baru menggunakan SheetJS
+      const worksheet = XLSX.utils.aoa_to_sheet(templateData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Transaksi");
+
+      // Mengunduh file dengan ekstensi .xlsx
+      XLSX.writeFile(workbook, `Template_Import_Transaksi_${new Date().toISOString().slice(0, 10)}.xlsx`);
     }
 
+    // 2. Fungsi Import File EXCEL (.xlsx / .xls / .csv)
     function importDataExcel(event) {
       const file = event.target.files[0];
       if (!file) return;
       
       const reader = new FileReader();
       reader.onload = function(e) {
-        const text = e.target.result;
-        const lines = text.split(/\r\n|\n/).filter(l => l.trim() !== '');
-        
-        if (lines.length <= 1) { 
-          alert('File CSV kosong atau format tidak valid.'); 
-          return; 
-        }
-        
-        let importedCount = 0;
-        const delimiter = lines[0].includes(';') ? ';' : ',';
-
-        for (let i = 1; i < lines.length; i++) {
-          const cols = lines[i].split(delimiter).map(val => val.replace(/^["'](.*)["']$/, '$1').trim());
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
           
-          if (cols.length >= 7) {
+          // Ambil sheet pertama
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+          
+          // Ubah sheet menjadi format JSON (array of arrays)
+          const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+          
+          if (rows.length <= 1) {
+            alert('File Excel kosong atau format tidak valid.');
+            return;
+          }
+          
+          let importedCount = 0;
+          // Mulai dari baris ke-1 (indeks 1, melewati header di indeks 0)
+          for (let i = 1; i < rows.length; i++) {
+            const cols = rows[i];
+            if (!cols || cols.length === 0 || !cols[0]) continue;
+            
             const modal = Number(cols[5]) || 0;
             const jual = Number(cols[6]) || 0;
-            // Jika kolom Keuntungan (indeks 7) kosong, hitung otomatis dari Harga Jual - Harga Modal
-            const untung = cols[7] !== '' && !isNaN(cols[7]) ? Number(cols[7]) : (jual - modal);
+            // Jika kolom Keuntungan (indeks 7) kosong atau berupa rumus Excel, hitung otomatis
+            const untung = (cols[7] !== '' && !isNaN(cols[7])) ? Number(cols[7]) : (jual - modal);
 
             appData.transaksi.unshift({
-              id: cols[0] || 'TRX-' + Date.now() + i,
-              timestamp: cols[1] || new Date().toISOString().slice(0, 10) + ' ' + new Date().toTimeString().slice(0, 5),
-              kategori: cols[2] || 'Fisik',
-              detail: cols[3] || 'Import Data',
+              id: String(cols[0] || 'TRX-' + Date.now() + i),
+              timestamp: String(cols[1] || new Date().toISOString().slice(0, 10) + ' ' + new Date().toTimeString().slice(0, 5)),
+              kategori: String(cols[2] || 'Fisik'),
+              detail: String(cols[3] || 'Import Data'),
               qty: Number(cols[4]) || 1,
               modal: modal,
               jual: jual,
               untung: untung,
-              status: cols[8] || 'Lunas',
-              pelanggan: cols[9] || 'Umum'
+              status: String(cols[8] || 'Lunas'),
+              pelanggan: String(cols[9] || 'Umum')
             });
             importedCount++;
           }
-        }
 
-        calculateDashboardMetrics(); 
-        saveData(); 
-        renderAllViews();
-        
-        event.target.value = '';
-        alert(`Berhasil mengimport ${importedCount} data transaksi ke Riwayat Transaksi!`);
+          calculateDashboardMetrics(); 
+          saveData(); 
+          renderAllViews();
+          
+          event.target.value = '';
+          alert(`Berhasil mengimport ${importedCount} data transaksi dari Excel ke Riwayat Transaksi!`);
+        } catch (err) {
+          console.error(err);
+          alert('Terjadi kesalahan saat membaca file Excel. Pastikan format file benar.');
+        }
       };
       
-      reader.readAsText(file, 'UTF-8');
+      reader.readAsArrayBuffer(file);
     }
 
     function exportDataExcel() {
