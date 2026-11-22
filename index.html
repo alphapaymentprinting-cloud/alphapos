@@ -509,9 +509,28 @@
 
           <!-- Riwayat Percetakan -->
           <div class="lg:col-span-2 glass-card p-6 rounded-3xl space-y-4">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
-              <h3 class="text-sm font-bold text-slate-900">Riwayat Layanan Percetakan</h3>
-              <span class="text-[11px] font-semibold text-cyan-700 bg-cyan-50 px-3 py-1 rounded-xl border border-cyan-200">Sheet: Percetakan</span>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
+              <div>
+                <h3 class="text-sm font-bold text-slate-900">Riwayat Layanan Percetakan</h3>
+                <p class="text-[11px] text-slate-500">
+                  Jumlah: <span id="cetak-count-periode" class="font-bold text-slate-800">0</span> | 
+                  Total Jasa: <span id="cetak-total-periode" class="font-extrabold text-emerald-600">Rp 0</span>
+                </p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 shadow-sm">
+                  <span class="text-[10px] text-slate-500">Baris:</span>
+                  <select id="per-page-percetakan" onchange="pagePercetakan = 1; renderTabelPercetakan();" class="bg-transparent text-xs text-slate-900 font-bold focus:outline-none">
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="all">Semua</option>
+                  </select>
+                </div>
+                <input type="month" id="filter-bulan-percetakan" onchange="pagePercetakan = 1; renderTabelPercetakan();" class="bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-cyan-500 font-medium shadow-sm">
+                <button onclick="document.getElementById('filter-bulan-percetakan').value=''; pagePercetakan = 1; renderTabelPercetakan();" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-semibold">Semua</button>
+              </div>
             </div>
             <div class="overflow-x-auto">
               <table class="w-full text-left border-collapse">
@@ -528,6 +547,10 @@
                 </thead>
                 <tbody id="tabel-percetakan-body" class="divide-y divide-slate-200 text-xs text-slate-700"></tbody>
               </table>
+            </div>
+            <div class="flex flex-col sm:flex-row items-center justify-between pt-3 border-t border-slate-200 text-xs text-slate-500 gap-2">
+              <div id="info-page-percetakan">Menampilkan 0 dari 0 data</div>
+              <div id="btn-page-percetakan" class="flex items-center gap-1"></div>
             </div>
           </div>
         </div>
@@ -552,9 +575,27 @@
         </div>
 
         <div class="glass-card p-6 rounded-3xl space-y-4">
-          <div class="relative flex-1 max-w-md">
-            <i class="fas fa-search absolute left-4 top-3.5 text-slate-400 text-xs"></i>
-            <input type="text" id="cari-produk-tabel" oninput="renderTabelProduk()" placeholder="Cari nama barang..." class="w-full bg-white border border-slate-200 rounded-2xl pl-10 pr-4 py-3 text-xs text-slate-900 focus:outline-none focus:border-orange-500 font-medium shadow-sm">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
+            <div class="relative flex-1 max-w-md">
+              <i class="fas fa-search absolute left-4 top-3 text-slate-400 text-xs"></i>
+              <input type="text" id="cari-produk-tabel" oninput="pageProduk = 1; renderTabelProduk();" placeholder="Cari nama barang..." class="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-900 focus:outline-none focus:border-orange-500 font-medium shadow-sm">
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <div class="text-[11px] text-slate-500">
+                Jenis: <span id="produk-count-filtered" class="font-bold text-slate-900">0</span> | 
+                Total Stok: <span id="produk-stok-filtered" class="font-extrabold text-emerald-600">0 Unit</span>
+              </div>
+              <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 shadow-sm">
+                <span class="text-[10px] text-slate-500">Baris:</span>
+                <select id="per-page-produk" onchange="pageProduk = 1; renderTabelProduk();" class="bg-transparent text-xs text-slate-900 font-bold focus:outline-none">
+                  <option value="10" selected>10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                  <option value="all">Semua</option>
+                </select>
+              </div>
+            </div>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
@@ -571,6 +612,10 @@
               <tbody id="tabel-produk-body" class="divide-y divide-slate-200 text-xs text-slate-700"></tbody>
             </table>
           </div>
+          <div class="flex flex-col sm:flex-row items-center justify-between pt-3 border-t border-slate-200 text-xs text-slate-500 gap-2">
+            <div id="info-page-produk">Menampilkan 0 dari 0 data</div>
+            <div id="btn-page-produk" class="flex items-center gap-1"></div>
+          </div>
         </div>
       </section>
 
@@ -586,21 +631,50 @@
           </button>
         </div>
 
-        <div class="glass-card p-6 rounded-3xl overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                <th class="py-3 px-4">ID & Tanggal</th>
-                <th class="py-3 px-4">Pelanggan & No HP</th>
-                <th class="py-3 px-4">Perangkat</th>
-                <th class="py-3 px-4">Keluhan</th>
-                <th class="py-3 px-4 text-right">Estimasi Biaya</th>
-                <th class="py-3 px-4 text-center">Status</th>
-                <th class="py-3 px-4 text-center">Aksi (Cetak / Edit / Hapus)</th>
-              </tr>
-            </thead>
-            <tbody id="tabel-servis-body" class="divide-y divide-slate-200 text-xs text-slate-700"></tbody>
-          </table>
+        <div class="glass-card p-6 rounded-3xl space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
+            <div>
+              <h3 class="text-sm font-bold text-slate-900">Daftar Unit Servis</h3>
+              <p class="text-[11px] text-slate-500">
+                Jumlah Unit: <span id="servis-count-periode" class="font-bold text-slate-800">0</span> | 
+                Total Estimasi Biaya: <span id="servis-total-periode" class="font-extrabold text-blue-600">Rp 0</span>
+              </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 shadow-sm">
+                <span class="text-[10px] text-slate-500">Baris:</span>
+                <select id="per-page-servis" onchange="pageServis = 1; renderTabelServis();" class="bg-transparent text-xs text-slate-900 font-bold focus:outline-none">
+                  <option value="10" selected>10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                  <option value="all">Semua</option>
+                </select>
+              </div>
+              <input type="month" id="filter-bulan-servis" onchange="pageServis = 1; renderTabelServis();" class="bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-blue-500 font-medium shadow-sm">
+              <button onclick="document.getElementById('filter-bulan-servis').value=''; pageServis = 1; renderTabelServis();" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-semibold">Semua</button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                  <th class="py-3 px-4">ID & Tanggal</th>
+                  <th class="py-3 px-4">Pelanggan & No HP</th>
+                  <th class="py-3 px-4">Perangkat</th>
+                  <th class="py-3 px-4">Keluhan</th>
+                  <th class="py-3 px-4 text-right">Estimasi Biaya</th>
+                  <th class="py-3 px-4 text-center">Status</th>
+                  <th class="py-3 px-4 text-center">Aksi (Cetak / Edit / Hapus)</th>
+                </tr>
+              </thead>
+              <tbody id="tabel-servis-body" class="divide-y divide-slate-200 text-xs text-slate-700"></tbody>
+            </table>
+          </div>
+          <div class="flex flex-col sm:flex-row items-center justify-between pt-3 border-t border-slate-200 text-xs text-slate-500 gap-2">
+            <div id="info-page-servis">Menampilkan 0 dari 0 data</div>
+            <div id="btn-page-servis" class="flex items-center gap-1"></div>
+          </div>
         </div>
       </section>
 
@@ -613,20 +687,50 @@
           </div>
         </div>
 
-        <div class="glass-card p-6 rounded-3xl overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                <th class="py-3 px-4">ID & Tanggal</th>
-                <th class="py-3 px-4">Pelanggan</th>
-                <th class="py-3 px-4">Rincian</th>
-                <th class="py-3 px-4 text-right">Total Hutang</th>
-                <th class="py-3 px-4 text-center">Status</th>
-                <th class="py-3 px-4 text-center">Aksi</th>
-              </tr>
-            </thead>
-            <tbody id="tabel-kasbon-body" class="divide-y divide-slate-200 text-xs text-slate-700"></tbody>
-          </table>
+        <div class="glass-card p-6 rounded-3xl space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
+            <div>
+              <h3 class="text-sm font-bold text-slate-900">Daftar Piutang Pelanggan</h3>
+              <p class="text-[11px] text-slate-500">
+                Jumlah: <span id="kasbon-count-periode" class="font-bold text-slate-800">0</span> | 
+                Total: <span id="kasbon-total-periode" class="font-extrabold text-slate-900">Rp 0</span> | 
+                Belum Lunas: <span id="kasbon-belum-lunas-periode" class="font-extrabold text-rose-600">Rp 0</span>
+              </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 shadow-sm">
+                <span class="text-[10px] text-slate-500">Baris:</span>
+                <select id="per-page-kasbon" onchange="pageKasbon = 1; renderTabelKasbon();" class="bg-transparent text-xs text-slate-900 font-bold focus:outline-none">
+                  <option value="10" selected>10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                  <option value="all">Semua</option>
+                </select>
+              </div>
+              <input type="month" id="filter-bulan-kasbon" onchange="pageKasbon = 1; renderTabelKasbon();" class="bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-rose-500 font-medium shadow-sm">
+              <button onclick="document.getElementById('filter-bulan-kasbon').value=''; pageKasbon = 1; renderTabelKasbon();" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-semibold">Semua</button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                  <th class="py-3 px-4">ID & Tanggal</th>
+                  <th class="py-3 px-4">Pelanggan</th>
+                  <th class="py-3 px-4">Rincian</th>
+                  <th class="py-3 px-4 text-right">Total Hutang</th>
+                  <th class="py-3 px-4 text-center">Status</th>
+                  <th class="py-3 px-4 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tabel-kasbon-body" class="divide-y divide-slate-200 text-xs text-slate-700"></tbody>
+            </table>
+          </div>
+          <div class="flex flex-col sm:flex-row items-center justify-between pt-3 border-t border-slate-200 text-xs text-slate-500 gap-2">
+            <div id="info-page-kasbon">Menampilkan 0 dari 0 data</div>
+            <div id="btn-page-kasbon" class="flex items-center gap-1"></div>
+          </div>
         </div>
       </section>
 
@@ -772,9 +876,28 @@
           </div>
 
           <div class="lg:col-span-2 glass-card p-6 rounded-3xl space-y-4">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
-              <h3 class="text-sm font-bold text-slate-900">Riwayat Pembagian Laba</h3>
-              <span class="text-[11px] font-semibold text-purple-700 bg-purple-50 px-3 py-1 rounded-xl border border-purple-200">Sheet: Bagi_Laba</span>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
+              <div>
+                <h3 class="text-sm font-bold text-slate-900">Riwayat Pembagian Laba</h3>
+                <p class="text-[11px] text-slate-500">
+                  Jumlah: <span id="bagilaba-count-periode" class="font-bold text-slate-800">0</span> | 
+                  Total Laba Bersih: <span id="bagilaba-total-periode" class="font-extrabold text-purple-600">Rp 0</span>
+                </p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 shadow-sm">
+                  <span class="text-[10px] text-slate-500">Baris:</span>
+                  <select id="per-page-bagilaba" onchange="pageBagiLaba = 1; renderTabelBagiLaba();" class="bg-transparent text-xs text-slate-900 font-bold focus:outline-none">
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="all">Semua</option>
+                  </select>
+                </div>
+                <input type="month" id="filter-bulan-bagilaba" onchange="pageBagiLaba = 1; renderTabelBagiLaba();" class="bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-purple-500 font-medium shadow-sm">
+                <button onclick="document.getElementById('filter-bulan-bagilaba').value=''; pageBagiLaba = 1; renderTabelBagiLaba();" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-semibold">Semua</button>
+              </div>
             </div>
             <div class="overflow-x-auto">
               <table class="w-full text-left border-collapse">
@@ -793,6 +916,10 @@
                 </thead>
                 <tbody id="tabel-bagilaba-body" class="divide-y divide-slate-200 text-xs text-slate-700"></tbody>
               </table>
+            </div>
+            <div class="flex flex-col sm:flex-row items-center justify-between pt-3 border-t border-slate-200 text-xs text-slate-500 gap-2">
+              <div id="info-page-bagilaba">Menampilkan 0 dari 0 data</div>
+              <div id="btn-page-bagilaba" class="flex items-center gap-1"></div>
             </div>
           </div>
         </div>
@@ -967,6 +1094,47 @@
     let currentScanTarget = 'kasir';
     let currentPageTrx = 1;
     let lastMutationTime = 0;
+    let pagePercetakan = 1;
+    let pageProduk = 1;
+    let pageServis = 1;
+    let pageKasbon = 1;
+    let pageBagiLaba = 1;
+
+    function paginateAndRenderControls(dataList, currentPage, perPageVal, infoId, btnContainerId, onPageChangeFnName) {
+      const totalData = dataList.length;
+      const isAll = perPageVal === 'all';
+      const perPage = isAll ? (totalData || 1) : (Number(perPageVal) || 10);
+      const totalPages = isAll ? 1 : (Math.ceil(totalData / perPage) || 1);
+
+      if (currentPage > totalPages) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+
+      const startIndex = isAll ? 0 : (currentPage - 1) * perPage;
+      const sliced = isAll ? dataList : dataList.slice(startIndex, startIndex + perPage);
+      const endItem = isAll ? totalData : Math.min(startIndex + perPage, totalData);
+
+      const infoEl = document.getElementById(infoId);
+      if (infoEl) {
+        infoEl.innerText = `Menampilkan ${totalData > 0 ? startIndex + 1 : 0} - ${endItem} dari ${totalData} data`;
+      }
+
+      const btnEl = document.getElementById(btnContainerId);
+      if (btnEl) {
+        btnEl.innerHTML = '';
+        if (!isAll && totalPages > 1) {
+          btnEl.innerHTML += `<button onclick="${onPageChangeFnName}(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="px-2.5 py-1 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-[11px] ${currentPage === 1 ? 'opacity-40 cursor-not-allowed' : ''}"><i class="fas fa-chevron-left"></i></button>`;
+          for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+              btnEl.innerHTML += `<button onclick="${onPageChangeFnName}(${i})" class="px-2.5 py-1 rounded-lg text-[11px] font-bold ${i === currentPage ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20' : 'bg-white border border-slate-200 hover:bg-slate-50 text-slate-700'}">${i}</button>`;
+            } else if (i === currentPage - 2 || i === currentPage + 2) {
+              btnEl.innerHTML += `<span class="px-1 text-slate-400">...</span>`;
+            }
+          }
+          btnEl.innerHTML += `<button onclick="${onPageChangeFnName}(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="px-2.5 py-1 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-[11px] ${currentPage === totalPages ? 'opacity-40 cursor-not-allowed' : ''}"><i class="fas fa-chevron-right"></i></button>`;
+        }
+      }
+      return { sliced, validPage: currentPage };
+    }
 
     window.addEventListener('DOMContentLoaded', () => {
       const todayStr = new Date().toISOString().slice(0, 10);
@@ -976,6 +1144,10 @@
       if (document.getElementById('ops-tanggal')) document.getElementById('ops-tanggal').value = todayStr;
       if (document.getElementById('filter-bulan-ops')) document.getElementById('filter-bulan-ops').value = currentMonthStr;
       if (document.getElementById('bagi-bulan-periode')) document.getElementById('bagi-bulan-periode').value = currentMonthStr;
+      if (document.getElementById('filter-bulan-percetakan')) document.getElementById('filter-bulan-percetakan').value = currentMonthStr;
+      if (document.getElementById('filter-bulan-servis')) document.getElementById('filter-bulan-servis').value = currentMonthStr;
+      if (document.getElementById('filter-bulan-kasbon')) document.getElementById('filter-bulan-kasbon').value = currentMonthStr;
+      if (document.getElementById('filter-bulan-bagilaba')) document.getElementById('filter-bulan-bagilaba').value = currentMonthStr;
 
       loadAllData();
       setInterval(() => {
@@ -1873,16 +2045,28 @@
       bukaStrukCustom(newPrtId, timestampStr, pelanggan, `${jenisLayanan} - ${detail} (${qty}x)`, totalLaba, totalLaba, 0);
     }
 
+    function setPagePercetakan(p) { pagePercetakan = p; renderTabelPercetakan(); }
     function renderTabelPercetakan() {
+      const filterBulan = document.getElementById('filter-bulan-percetakan')?.value || '';
+      const perPageVal = document.getElementById('per-page-percetakan')?.value || '10';
       const tbody = document.getElementById('tabel-percetakan-body');
       if (!tbody) return;
       tbody.innerHTML = '';
-      const list = appData.percetakan || [];
-      if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Belum ada data layanan percetakan</td></tr>`;
+
+      const filtered = (appData.percetakan || []).filter(c => !filterBulan || (c.timestamp && c.timestamp.startsWith(filterBulan)));
+      const totalJasa = filtered.reduce((acc, c) => acc + (Number(c.totalLaba) || 0), 0);
+
+      if (document.getElementById('cetak-count-periode')) document.getElementById('cetak-count-periode').innerText = filtered.length;
+      if (document.getElementById('cetak-total-periode')) document.getElementById('cetak-total-periode').innerText = formatRupiah(totalJasa);
+
+      const { sliced, validPage } = paginateAndRenderControls(filtered, pagePercetakan, perPageVal, 'info-page-percetakan', 'btn-page-percetakan', 'setPagePercetakan');
+      pagePercetakan = validPage;
+
+      if (sliced.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Tidak ada data layanan percetakan pada periode ini</td></tr>`;
         return;
       }
-      list.forEach(c => {
+      sliced.forEach(c => {
         tbody.innerHTML += `
           <tr class="hover:bg-slate-50 transition">
             <td class="py-3 px-3"><div class="font-bold text-slate-900">${c.timestamp}</div><div class="text-[10px] text-slate-400">${c.id}</div></td>
@@ -1943,22 +2127,37 @@
     }
 
     // ================= STOK BARANG (KATEGORI DIHAPUS) =================
+    function setPageProduk(p) { pageProduk = p; renderTabelProduk(); }
     function renderTabelProduk() {
       const tbody = document.getElementById('tabel-produk-body');
+      if (!tbody) return;
       tbody.innerHTML = '';
       const keyword = (document.getElementById('cari-produk-tabel')?.value || '').toLowerCase();
+      const perPageVal = document.getElementById('per-page-produk')?.value || '10';
+
       const filtered = (appData.produk || []).filter(p => p.nama.toLowerCase().includes(keyword));
-      const totalStok = (appData.produk || []).reduce((acc, p) => acc + (Number(p.stok) || 0), 0);
+      const totalStokAll = (appData.produk || []).reduce((acc, p) => acc + (Number(p.stok) || 0), 0);
+      const totalStokFiltered = filtered.reduce((acc, p) => acc + (Number(p.stok) || 0), 0);
+
       if (document.getElementById('produk-total-stok-badge')) {
-        document.getElementById('produk-total-stok-badge').innerText = totalStok.toLocaleString('id-ID') + ' Unit';
+        document.getElementById('produk-total-stok-badge').innerText = totalStokAll.toLocaleString('id-ID') + ' Unit';
+      }
+      if (document.getElementById('produk-count-filtered')) {
+        document.getElementById('produk-count-filtered').innerText = filtered.length + ' Barang';
+      }
+      if (document.getElementById('produk-stok-filtered')) {
+        document.getElementById('produk-stok-filtered').innerText = totalStokFiltered.toLocaleString('id-ID') + ' Unit';
       }
 
-      if (filtered.length === 0) {
+      const { sliced, validPage } = paginateAndRenderControls(filtered, pageProduk, perPageVal, 'info-page-produk', 'btn-page-produk', 'setPageProduk');
+      pageProduk = validPage;
+
+      if (sliced.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Tidak ada barang</td></tr>`;
         return;
       }
 
-      filtered.forEach(p => {
+      sliced.forEach(p => {
         const thumbHtml = p.gambar 
           ? `<img src="${p.gambar}" class="w-10 h-10 rounded-xl object-cover border border-slate-200 shrink-0">` 
           : `<div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 shrink-0"><i class="fas fa-box"></i></div>`;
@@ -2066,14 +2265,28 @@
     }
 
     // ================= SERVIS PC =================
+    function setPageServis(p) { pageServis = p; renderTabelServis(); }
     function renderTabelServis() {
+      const filterBulan = document.getElementById('filter-bulan-servis')?.value || '';
+      const perPageVal = document.getElementById('per-page-servis')?.value || '10';
       const tbody = document.getElementById('tabel-servis-body');
+      if (!tbody) return;
       tbody.innerHTML = '';
-      if (appData.servis.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Tidak ada servis</td></tr>`;
+
+      const filtered = (appData.servis || []).filter(s => !filterBulan || (s.tanggal && s.tanggal.startsWith(filterBulan)));
+      const totalBiaya = filtered.reduce((acc, s) => acc + (Number(s.biaya) || 0), 0);
+
+      if (document.getElementById('servis-count-periode')) document.getElementById('servis-count-periode').innerText = filtered.length;
+      if (document.getElementById('servis-total-periode')) document.getElementById('servis-total-periode').innerText = formatRupiah(totalBiaya);
+
+      const { sliced, validPage } = paginateAndRenderControls(filtered, pageServis, perPageVal, 'info-page-servis', 'btn-page-servis', 'setPageServis');
+      pageServis = validPage;
+
+      if (sliced.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Tidak ada data servis pada periode ini</td></tr>`;
         return;
       }
-      appData.servis.forEach(s => {
+      sliced.forEach(s => {
         tbody.innerHTML += `
           <tr class="hover:bg-slate-50 transition">
             <td class="py-3 px-4"><div class="font-bold text-slate-900">${s.id}</div><div class="text-[10px] text-slate-400">${s.tanggal}</div></td>
@@ -2187,14 +2400,30 @@
     }
 
     // ================= KASBON =================
+    function setPageKasbon(p) { pageKasbon = p; renderTabelKasbon(); }
     function renderTabelKasbon() {
+      const filterBulan = document.getElementById('filter-bulan-kasbon')?.value || '';
+      const perPageVal = document.getElementById('per-page-kasbon')?.value || '10';
       const tbody = document.getElementById('tabel-kasbon-body');
+      if (!tbody) return;
       tbody.innerHTML = '';
-      if (appData.kasbon.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Tidak ada kasbon</td></tr>`;
+
+      const filtered = (appData.kasbon || []).filter(k => !filterBulan || (k.tanggal && k.tanggal.startsWith(filterBulan)));
+      const totalSemuaKasbon = filtered.reduce((acc, k) => acc + (Number(k.hutang) || 0), 0);
+      const totalBelumLunas = filtered.filter(k => k.status === 'Belum Lunas').reduce((acc, k) => acc + (Number(k.hutang) || 0), 0);
+
+      if (document.getElementById('kasbon-count-periode')) document.getElementById('kasbon-count-periode').innerText = filtered.length;
+      if (document.getElementById('kasbon-total-periode')) document.getElementById('kasbon-total-periode').innerText = formatRupiah(totalSemuaKasbon);
+      if (document.getElementById('kasbon-belum-lunas-periode')) document.getElementById('kasbon-belum-lunas-periode').innerText = formatRupiah(totalBelumLunas);
+
+      const { sliced, validPage } = paginateAndRenderControls(filtered, pageKasbon, perPageVal, 'info-page-kasbon', 'btn-page-kasbon', 'setPageKasbon');
+      pageKasbon = validPage;
+
+      if (sliced.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Tidak ada catatan kasbon pada periode ini</td></tr>`;
         return;
       }
-      appData.kasbon.forEach(k => {
+      sliced.forEach(k => {
         tbody.innerHTML += `
           <tr class="hover:bg-slate-50 transition">
             <td class="py-3 px-4"><div class="font-bold text-slate-900">${k.id}</div><div class="text-[10px] text-slate-400">${k.tanggal}</div></td>
@@ -2391,16 +2620,28 @@
       await syncKeGoogleSheets(payload);
     }
 
+    function setPageBagiLaba(p) { pageBagiLaba = p; renderTabelBagiLaba(); }
     function renderTabelBagiLaba() {
+      const filterBulan = document.getElementById('filter-bulan-bagilaba')?.value || '';
+      const perPageVal = document.getElementById('per-page-bagilaba')?.value || '10';
       const tbody = document.getElementById('tabel-bagilaba-body');
       if (!tbody) return;
       tbody.innerHTML = '';
-      const list = appData.bagiLaba || [];
-      if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-400">Belum ada riwayat pembagian laba</td></tr>`;
+
+      const filtered = (appData.bagiLaba || []).filter(b => !filterBulan || (b.bulanPeriode && b.bulanPeriode.startsWith(filterBulan)));
+      const totalLabaBersih = filtered.reduce((acc, b) => acc + (Number(b.labaBersih) || 0), 0);
+
+      if (document.getElementById('bagilaba-count-periode')) document.getElementById('bagilaba-count-periode').innerText = filtered.length;
+      if (document.getElementById('bagilaba-total-periode')) document.getElementById('bagilaba-total-periode').innerText = formatRupiah(totalLabaBersih);
+
+      const { sliced, validPage } = paginateAndRenderControls(filtered, pageBagiLaba, perPageVal, 'info-page-bagilaba', 'btn-page-bagilaba', 'setPageBagiLaba');
+      pageBagiLaba = validPage;
+
+      if (sliced.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-400">Belum ada riwayat pembagian laba pada periode ini</td></tr>`;
         return;
       }
-      list.forEach(b => {
+      sliced.forEach(b => {
         tbody.innerHTML += `
           <tr class="hover:bg-slate-50 transition">
             <td class="py-3 px-3"><div class="font-bold text-slate-900">${b.bulanPeriode}</div><div class="text-[10px] text-slate-400">${b.id}</div></td>
