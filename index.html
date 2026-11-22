@@ -243,7 +243,6 @@
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h3 class="text-base font-bold text-slate-900">Riwayat Transaksi</h3>
-              <p class="text-xs text-slate-500">Pencarian berdasarkan ID, pelanggan, atau detail, serta filter tampilan baris.</p>
             </div>
             
             <div class="flex flex-wrap items-center gap-1.5 overflow-x-auto py-1">
@@ -316,7 +315,7 @@
       <section id="tab-kasir" class="tab-content hidden space-y-6">
         <div class="flex flex-wrap gap-2 bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm">
           <button onclick="switchKasirMode('fisik')" id="mode-btn-fisik" class="kasir-mode-btn flex-1 min-w-[110px] py-2.5 px-3 rounded-xl text-xs font-bold transition bg-orange-500 text-white shadow-md shadow-orange-500/20">
-            <i class="fas fa-boxes mr-1"></i> Barang Fisik
+            <i class="fas fa-boxes mr-1"></i> Barang
           </button>
           <button onclick="switchKasirMode('pulsa')" id="mode-btn-pulsa" class="kasir-mode-btn flex-1 min-w-[110px] py-2.5 px-3 rounded-xl text-xs font-bold transition text-slate-600 hover:text-slate-900">
             <i class="fas fa-mobile-alt mr-1"></i> Pulsa
@@ -1189,6 +1188,9 @@
         'bagilaba': 'Bagi Laba'
       };
       document.getElementById('header-title-text').innerText = titles[tabId] || 'ALPHA';
+      if (tabId === 'kasir') {
+        filterProdukKasirList();
+      }
       if (window.innerWidth < 768) toggleSidebar();
     }
 
@@ -1211,10 +1213,11 @@
         document.getElementById('dash-saldo-tersedia').innerText = formatRupiah(appData.dashboard.saldoLabaTersedia);
       }
       renderDashboardRiwayat();
+      filterProdukKasirList();
+      renderTabelProduk();
       if (!isBackground) {
-        renderKasirDropdowns();
+        renderCart();
         renderTabelPercetakan();
-        renderTabelProduk();
         renderTabelServis();
         renderTabelKasbon();
         renderTabelOperasional();
@@ -1626,7 +1629,9 @@
       const digitalContainer = document.getElementById('kasir-digital-container');
 
       if (mode === 'fisik') {
-        fisikContainer.classList.remove('hidden'); digitalContainer.classList.add('hidden');
+        fisikContainer.classList.remove('hidden');
+        digitalContainer.classList.add('hidden');
+        filterProdukKasirList();
       } else {
         fisikContainer.classList.add('hidden'); digitalContainer.classList.remove('hidden');
         resetDigitalRows();
