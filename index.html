@@ -906,9 +906,9 @@
       <div class="text-center space-y-1">
         <div class="flex justify-center mb-2">
           <img id="struk-logo-img"
-               src="https://lh3.googleusercontent.com/d/1GwiilZPULoICTSufUi4LqAb4WfauSnMd=s400"
+               src="https://lh3.googleusercontent.com/d/1GwiilZPULoICTSufUi4LqAb4WfauSnMd=w400"
                alt="Logo Toko"
-               class="w-16 h-16 object-contain rounded-xl">
+               class="w-16 h-16 object-contain rounded-xl shadow">
         </div>
         <h4 class="font-black text-lg">ALPHA RETAIL</h4>
         <p class="text-[10px] text-slate-500">Struk Pembayaran & Layanan Sah</p>
@@ -1934,7 +1934,11 @@
     async function bagikanStrukJPG() {
       const element = document.getElementById('print-area');
       element.style.display = 'block';
-      const canvas = await html2canvas(element, { scale: 2, useCORS: true, allowTaint: true });
+      const canvas = await html2canvas(element, { 
+        scale: 2, 
+        useCORS: true,
+        allowTaint: false
+      });
       const link = document.createElement('a');
       link.download = `Struk-${Date.now()}.jpg`;
       link.href = canvas.toDataURL('image/jpeg', 0.95);
