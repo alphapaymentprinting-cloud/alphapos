@@ -747,6 +747,9 @@
   <div id="modal-struk" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md hidden flex flex-col items-center justify-center p-4">
     <div class="glass-card p-6 rounded-3xl w-full max-w-sm space-y-4 border border-slate-200 bg-white text-slate-900 shadow-2xl" id="print-area">
       <div class="text-center space-y-1">
+        <div class="flex justify-center mb-2">
+          <img src="https://drive.google.com/uc?export=view&id=1GwiilZPULoICTSufUi4LqAb4WfauSnMd" alt="Logo Toko" class="w-16 h-16 object-contain rounded-xl shadow">
+        </div>
         <h4 class="font-black text-lg">ALPHA RETAIL</h4>
         <p class="text-[10px] text-slate-500">Struk Pembayaran & Layanan Sah</p>
       </div>
@@ -1687,6 +1690,17 @@
       if (!confirm('Hapus produk ini?')) return;
       appData.produk = appData.produk.filter(p => p.id !== id);
       calculateDashboardMetrics(); saveData(); renderAllViews();
+
+      if (GAS_API_URL) {
+        try {
+          await fetch(GAS_API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'hapusProduk', id: id })
+          });
+        } catch (err) { console.error('Gagal hapus produk di Sheets:', err); }
+      }
     }
 
     async function simpanDataProduk() {
@@ -1700,15 +1714,33 @@
 
       if (!nama || !jual) { alert('Nama dan harga jual wajib diisi!'); return; }
 
+      let produkObj = {};
       if (id) {
         const existing = appData.produk.find(p => p.id === id);
-        if (existing) Object.assign(existing, { kategori, nama, gambar, modal, jual, stok });
-        else appData.produk.push({ id, kategori, nama, gambar, modal, jual, stok });
+        if (existing) {
+          Object.assign(existing, { kategori, nama, gambar, modal, jual, stok });
+          produkObj = existing;
+        } else {
+          produkObj = { id, kategori, nama, gambar, modal, jual, stok };
+          appData.produk.push(produkObj);
+        }
       } else {
-        appData.produk.push({ id: 'PRD-' + Math.floor(1000 + Math.random() * 9000), kategori, nama, gambar, modal, jual, stok });
+        produkObj = { id: 'PRD-' + Math.floor(1000 + Math.random() * 9000), kategori, nama, gambar, modal, jual, stok };
+        appData.produk.push(produkObj);
       }
 
       closeModalProduk(); calculateDashboardMetrics(); saveData(); renderAllViews();
+
+      if (GAS_API_URL) {
+        try {
+          await fetch(GAS_API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'simpanProduk', ...produkObj })
+          });
+        } catch (err) { console.error('Gagal sinkronisasi produk ke Sheets:', err); }
+      }
     }
 
     // ================= SERVIS PC =================
@@ -1779,6 +1811,17 @@
       if (!confirm('Hapus data servis ini?')) return;
       appData.servis = appData.servis.filter(s => s.id !== id);
       saveData(); renderAllViews();
+
+      if (GAS_API_URL) {
+        try {
+          await fetch(GAS_API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'hapusServis', id: id })
+          });
+        } catch (err) { console.error('Gagal hapus servis di Sheets:', err); }
+      }
     }
 
     async function simpanDataServis() {
@@ -1791,17 +1834,33 @@
 
       if (!pelanggan || !perangkat || !biaya) { alert('Lengkapi data servis!'); return; }
 
+      let servisObj = {};
       if (editId) {
         const s = appData.servis.find(item => item.id === editId);
-        if (s) Object.assign(s, { pelanggan, noHp, perangkat, keluhan, biaya });
+        if (s) {
+          Object.assign(s, { pelanggan, noHp, perangkat, keluhan, biaya });
+          servisObj = s;
+        }
       } else {
-        appData.servis.unshift({
+        servisObj = {
           id: 'SRV-' + Date.now().toString().slice(-6),
           tanggal: new Date().toISOString().slice(0, 10),
           pelanggan, noHp, perangkat, keluhan, biaya, status: 'Antre'
-        });
+        };
+        appData.servis.unshift(servisObj);
       }
       closeModalServis(); calculateDashboardMetrics(); saveData(); renderAllViews();
+
+      if (GAS_API_URL) {
+        try {
+          await fetch(GAS_API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'simpanServis', ...servisObj })
+          });
+        } catch (err) { console.error('Gagal sinkronisasi servis ke Sheets:', err); }
+      }
     }
 
     async function updateStatusServis(idServis, status) {
@@ -1819,6 +1878,17 @@
         await syncKeGoogleSheets(newTrx);
       }
       calculateDashboardMetrics(); saveData(); renderAllViews();
+
+      if (GAS_API_URL) {
+        try {
+          await fetch(GAS_API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'updateStatusServis', id: s.id, status: s.status })
+          });
+        } catch (err) { console.error('Gagal update status servis di Sheets:', err); }
+      }
     }
 
     function bukaStrukServis(idServis) {
@@ -1861,7 +1931,23 @@
     async function lunasiKasbon(idKasbon) {
       if (!confirm('Lunasi kasbon ini?')) return;
       const k = appData.kasbon.find(item => item.id === idKasbon);
-      if (k) { k.status = 'Lunas'; calculateDashboardMetrics(); saveData(); renderAllViews(); }
+      if (k) { 
+        k.status = 'Lunas'; 
+        calculateDashboardMetrics(); 
+        saveData(); 
+        renderAllViews(); 
+
+        if (GAS_API_URL) {
+          try {
+            await fetch(GAS_API_URL, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'lunasiKasbon', id: k.id })
+            });
+          } catch (err) { console.error('Gagal lunasi kasbon di Sheets:', err); }
+        }
+      }
     }
 
     function getBiayaOperasionalInput() {
@@ -1890,6 +1976,8 @@
       const labaBersihBagi = Math.max(0, saldoTersedia - opsBiaya.totalBiaya);
 
       const payload = {
+        id: 'OPS-' + Date.now().toString().slice(-6),
+        tanggal: new Date().toISOString().slice(0, 10),
         catatan: document.getElementById('ops-catatan').value.trim() || 'Alokasi Laba',
         biayaOps: opsBiaya.totalBiaya,
         rincianOps: `Listrik/Air: ${formatRupiah(opsBiaya.listrik)}, WiFi: ${formatRupiah(opsBiaya.wifi)}, Pulsa: ${formatRupiah(opsBiaya.pulsa)}, Lainnya: ${formatRupiah(opsBiaya.lainnya)}`,
@@ -1899,9 +1987,20 @@
         total: opsBiaya.totalBiaya + labaBersihBagi
       };
 
-      appData.operasional.unshift({ id: 'OPS-' + Date.now().toString().slice(-6), tanggal: new Date().toISOString().slice(0, 10), ...payload });
+      appData.operasional.unshift(payload);
       alert('Alokasi tersimpan!');
       calculateDashboardMetrics(); saveData(); renderAllViews();
+
+      if (GAS_API_URL) {
+        try {
+          await fetch(GAS_API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'simpanAlokasi', ...payload })
+          });
+        } catch (err) { console.error('Gagal sinkronisasi alokasi ke Sheets:', err); }
+      }
     }
 
     function renderTabelOperasional() {
