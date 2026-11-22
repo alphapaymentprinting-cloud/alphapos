@@ -1392,33 +1392,69 @@
         alert('Uang diterima kurang dari total pembayaran!'); return;
       }
 
-      let grandModal = 0, grandQty = 0, detailNames = [];
+      let grandModal = 0, grandQty = 0, detailNames = [], itemsFisik = [];
       cart.forEach(item => {
         grandModal += item.modal * item.qty;
         grandQty += item.qty;
         detailNames.push(`${item.nama} (${item.qty}x)`);
         const prod = appData.produk.find(p => p.id === item.id);
-        if (prod && prod.kategori === 'Fisik') prod.stok = Math.max(0, prod.stok - item.qty);
+        if (prod && prod.kategori === 'Fisik') {
+          prod.stok = Math.max(0, prod.stok - item.qty);
+          itemsFisik.push({ id: item.id, qty: item.qty });
+        }
       });
 
       const now = new Date();
-      const newTrxId = 'TRX-' + Date.now().toString().slice(-6);
-      const newTrx = {
-        id: newTrxId,
-        timestamp: now.toISOString().slice(0, 10) + ' ' + now.toTimeString().slice(0, 5),
-        kategori: 'Fisik', detail: detailNames.join(', '), qty: grandQty, modal: grandModal, jual: grandTotal, untung: grandTotal - grandModal, status: statusBayar, pelanggan, bayar: uangBayar, kembalian: Math.max(0, uangBayar - grandTotal)
-      };
+      const timestampStr = now.toISOString().slice(0, 10) + ' ' + now.toTimeString().slice(0, 5);
+      const detailStr = detailNames.join(', ');
 
-      appData.transaksi.unshift(newTrx);
       if (statusBayar === 'Kasbon') {
-        appData.kasbon.unshift({ id: 'KSB-' + Date.now().toString().slice(-6), tanggal: now.toISOString().slice(0, 10), pelanggan, noHp: '-', hutang: grandTotal, status: 'Belum Lunas' });
+        const newKsbId = 'KSB-' + Date.now().toString().slice(-6);
+        const kasbonPayload = {
+          action: 'simpanKasbon',
+          id: newKsbId,
+          tanggal: now.toISOString().slice(0, 10),
+          pelanggan,
+          noHp: '-',
+          hutang: grandTotal,
+          status: 'Belum Lunas',
+          kategori: 'Fisik',
+          detail: detailStr,
+          qty: grandQty,
+          modal: grandModal,
+          itemsFisik
+        };
+        appData.kasbon.unshift(kasbonPayload);
+        await syncKeGoogleSheets(kasbonPayload);
+
+        cart = []; document.getElementById('cart-pelanggan').value = ''; document.getElementById('cart-uang-bayar').value = '';
+        renderCart(); calculateDashboardMetrics(); saveData(); renderAllViews();
+        bukaStrukCustom(newKsbId, timestampStr, pelanggan, detailStr, grandTotal, uangBayar, 0);
+      } else {
+        const newTrxId = 'TRX-' + Date.now().toString().slice(-6);
+        const newTrx = {
+          action: 'simpanTransaksi',
+          id: newTrxId,
+          timestamp: timestampStr,
+          kategori: 'Fisik',
+          detail: detailStr,
+          qty: grandQty,
+          modal: grandModal,
+          jual: grandTotal,
+          untung: grandTotal - grandModal,
+          status: 'Lunas',
+          pelanggan,
+          bayar: uangBayar,
+          kembalian: Math.max(0, uangBayar - grandTotal),
+          itemsFisik
+        };
+        appData.transaksi.unshift(newTrx);
+        await syncKeGoogleSheets(newTrx);
+
+        cart = []; document.getElementById('cart-pelanggan').value = ''; document.getElementById('cart-uang-bayar').value = '';
+        renderCart(); calculateDashboardMetrics(); saveData(); renderAllViews();
+        bukaStrukTransaksi(newTrxId);
       }
-
-      await syncKeGoogleSheets(newTrx);
-
-      cart = []; document.getElementById('cart-pelanggan').value = ''; document.getElementById('cart-uang-bayar').value = '';
-      renderCart(); calculateDashboardMetrics(); saveData(); renderAllViews();
-      bukaStrukTransaksi(newTrxId);
     }
 
     function switchKasirMode(mode) {
@@ -1524,7 +1560,7 @@
 
     async function prosesCheckoutDigital() {
       const rows = document.querySelectorAll('.digital-item-row');
-      const pelanggan = document.getElementById('dig-pelanggan').value || 'Umum';
+      const pelanggan = document.getElementById('dig-pelanggan').value.trim() || 'Umum';
       const statusBayar = document.getElementById('dig-status-bayar').value;
       const uangBayar = parseRupiah(document.getElementById('dig-uang-bayar').value);
       const kategoriMap = { 'pulsa': 'Pulsa & Data', 'ppob': 'PPOB', 'atm': 'Mini ATM', 'game': 'Game', 'wifi': 'WiFi' };
@@ -1549,27 +1585,56 @@
       });
 
       const now = new Date();
-      const newTrxId = 'TRX-' + Date.now().toString().slice(-6);
+      const timestampStr = now.toISOString().slice(0, 10) + ' ' + now.toTimeString().slice(0, 5);
       let detailGabung = items.map(i => i.detail).join(', ');
       let grandJual = items.reduce((a, b) => a + b.jual, 0);
       let grandModal = items.reduce((a, b) => a + b.modal, 0);
 
-      const masterTrx = {
-        id: newTrxId,
-        timestamp: now.toISOString().slice(0, 10) + ' ' + now.toTimeString().slice(0, 5),
-        kategori: kategoriTrx, detail: detailGabung, qty: items.length, modal: grandModal, jual: grandJual, untung: grandJual - grandModal, status: statusBayar, pelanggan, bayar: uangBayar, kembalian: Math.max(0, uangBayar - grandJual)
-      };
-
-      appData.transaksi.unshift(masterTrx);
       if (statusBayar === 'Kasbon') {
-        appData.kasbon.unshift({ id: 'KSB-' + Date.now().toString().slice(-6), tanggal: now.toISOString().slice(0, 10), pelanggan, noHp: '-', hutang: grandJual, status: 'Belum Lunas' });
+        const newKsbId = 'KSB-' + Date.now().toString().slice(-6);
+        const kasbonPayload = {
+          action: 'simpanKasbon',
+          id: newKsbId,
+          tanggal: now.toISOString().slice(0, 10),
+          pelanggan,
+          noHp: '-',
+          hutang: grandJual,
+          status: 'Belum Lunas',
+          kategori: kategoriTrx,
+          detail: detailGabung,
+          qty: items.length,
+          modal: grandModal
+        };
+        appData.kasbon.unshift(kasbonPayload);
+        await syncKeGoogleSheets(kasbonPayload);
+
+        document.getElementById('dig-pelanggan').value = ''; document.getElementById('dig-uang-bayar').value = '';
+        resetDigitalRows(); calculateDashboardMetrics(); saveData(); renderAllViews();
+        bukaStrukCustom(newKsbId, timestampStr, pelanggan, detailGabung, grandJual, uangBayar, 0);
+      } else {
+        const newTrxId = 'TRX-' + Date.now().toString().slice(-6);
+        const masterTrx = {
+          action: 'simpanTransaksi',
+          id: newTrxId,
+          timestamp: timestampStr,
+          kategori: kategoriTrx,
+          detail: detailGabung,
+          qty: items.length,
+          modal: grandModal,
+          jual: grandJual,
+          untung: grandJual - grandModal,
+          status: 'Lunas',
+          pelanggan,
+          bayar: uangBayar,
+          kembalian: Math.max(0, uangBayar - grandJual)
+        };
+        appData.transaksi.unshift(masterTrx);
+        await syncKeGoogleSheets(masterTrx);
+
+        document.getElementById('dig-pelanggan').value = ''; document.getElementById('dig-uang-bayar').value = '';
+        resetDigitalRows(); calculateDashboardMetrics(); saveData(); renderAllViews();
+        bukaStrukTransaksi(newTrxId);
       }
-
-      await syncKeGoogleSheets(masterTrx);
-
-      document.getElementById('dig-pelanggan').value = ''; document.getElementById('dig-uang-bayar').value = '';
-      resetDigitalRows(); calculateDashboardMetrics(); saveData(); renderAllViews();
-      bukaStrukTransaksi(newTrxId);
     }
 
     // ================= MODAL STRUK & BAGIKAN JPG =================
@@ -1586,6 +1651,19 @@
       document.getElementById('struk-total').innerText = formatRupiah(trx.jual);
       document.getElementById('struk-bayar').innerText = formatRupiah(trx.bayar || trx.jual);
       document.getElementById('struk-kembali').innerText = formatRupiah(trx.kembalian || 0);
+      document.getElementById('modal-struk').classList.remove('hidden');
+    }
+
+    function bukaStrukCustom(id, waktu, pelanggan, detail, total, bayar, kembali) {
+      document.getElementById('struk-id').innerText = id;
+      document.getElementById('struk-waktu').innerText = waktu;
+      document.getElementById('struk-pelanggan').innerText = pelanggan;
+      document.getElementById('struk-items-list').innerHTML = `
+        <div class="flex justify-between"><span>${detail}</span><span>${formatRupiah(total)}</span></div>
+      `;
+      document.getElementById('struk-total').innerText = formatRupiah(total);
+      document.getElementById('struk-bayar').innerText = formatRupiah(bayar);
+      document.getElementById('struk-kembali').innerText = formatRupiah(kembali);
       document.getElementById('modal-struk').classList.remove('hidden');
     }
 
@@ -1752,11 +1830,6 @@
         return;
       }
       appData.servis.forEach(s => {
-        let aksiExtra = '';
-        if (s.status === 'Diambil' || s.status === 'Selesai') {
-          aksiExtra = `<button onclick="bukaStrukServis('${s.id}')" class="p-2 bg-emerald-100 text-emerald-700 rounded-xl border border-emerald-300" title="Cetak/Bagikan Struk Servis"><i class="fas fa-print"></i></button>`;
-        }
-
         tbody.innerHTML += `
           <tr class="hover:bg-slate-50 transition">
             <td class="py-3 px-4"><div class="font-bold text-slate-900">${s.id}</div><div class="text-[10px] text-slate-400">${s.tanggal}</div></td>
@@ -1773,9 +1846,9 @@
               </select>
             </td>
             <td class="py-3 px-4 text-center flex items-center justify-center gap-1.5">
-              ${aksiExtra}
-              <button onclick="editServis('${s.id}')" class="p-2 bg-white border border-slate-200 text-slate-700 rounded-xl shadow-sm" title="Edit Servis"><i class="fas fa-edit"></i></button>
-              <button onclick="hapusServis('${s.id}')" class="p-2 bg-rose-50 border border-rose-200 text-rose-600 rounded-xl shadow-sm" title="Hapus Servis"><i class="fas fa-trash"></i></button>
+              <button onclick="bukaStrukServis('${s.id}')" class="p-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-xl border border-emerald-300 shadow-sm" title="Cetak / Bagikan Struk Servis"><i class="fas fa-print"></i></button>
+              <button onclick="editServis('${s.id}')" class="p-2 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl shadow-sm" title="Edit Servis"><i class="fas fa-edit"></i></button>
+              <button onclick="hapusServis('${s.id}')" class="p-2 bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-600 rounded-xl shadow-sm" title="Hapus Servis"><i class="fas fa-trash"></i></button>
             </td>
           </tr>`;
       });
@@ -1868,27 +1941,32 @@
       if (!s) return;
       const statusLama = s.status;
       s.status = status;
+      const newTrxId = 'TRX-' + Date.now().toString().slice(-6);
+
       if (status === 'Diambil' && statusLama !== 'Diambil') {
-        const newTrx = {
-          id: 'TRX-' + Date.now().toString().slice(-6),
+        appData.transaksi.unshift({
+          id: newTrxId,
           timestamp: new Date().toISOString().slice(0, 10) + ' ' + new Date().toTimeString().slice(0, 5),
-          kategori: 'Servis PC/Laptop', detail: `Servis ${s.perangkat} (${s.keluhan})`, qty: 1, modal: 0, jual: s.biaya, untung: s.biaya, status: 'Lunas', pelanggan: s.pelanggan, bayar: s.biaya, kembalian: 0
-        };
-        appData.transaksi.unshift(newTrx);
-        await syncKeGoogleSheets(newTrx);
+          kategori: 'Servis PC/Laptop',
+          detail: `Servis ${s.perangkat} (${s.keluhan})`,
+          qty: 1,
+          modal: 0,
+          jual: s.biaya,
+          untung: s.biaya,
+          status: 'Lunas',
+          pelanggan: s.pelanggan,
+          bayar: s.biaya,
+          kembalian: 0
+        });
       }
       calculateDashboardMetrics(); saveData(); renderAllViews();
 
-      if (GAS_API_URL) {
-        try {
-          await fetch(GAS_API_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'updateStatusServis', id: s.id, status: s.status })
-          });
-        } catch (err) { console.error('Gagal update status servis di Sheets:', err); }
-      }
+      await syncKeGoogleSheets({
+        action: 'updateStatusServis',
+        id: s.id,
+        status: s.status,
+        trxId: newTrxId
+      });
     }
 
     function bukaStrukServis(idServis) {
@@ -1929,25 +2007,48 @@
     }
 
     async function lunasiKasbon(idKasbon) {
-      if (!confirm('Lunasi kasbon ini?')) return;
+      if (!confirm('Lunasi kasbon ini dan masukkan ke transaksi lunas?')) return;
       const k = appData.kasbon.find(item => item.id === idKasbon);
-      if (k) { 
-        k.status = 'Lunas'; 
-        calculateDashboardMetrics(); 
-        saveData(); 
-        renderAllViews(); 
+      if (!k) return;
 
-        if (GAS_API_URL) {
-          try {
-            await fetch(GAS_API_URL, {
-              method: 'POST',
-              mode: 'no-cors',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ action: 'lunasiKasbon', id: k.id })
-            });
-          } catch (err) { console.error('Gagal lunasi kasbon di Sheets:', err); }
-        }
-      }
+      k.status = 'Lunas';
+      const now = new Date();
+      const newTrxId = 'TRX-' + Date.now().toString().slice(-6);
+      const timestampStr = now.toISOString().slice(0, 10) + ' ' + now.toTimeString().slice(0, 5);
+      const modal = Number(k.modal) || 0;
+      const jual = Number(k.hutang) || 0;
+
+      appData.transaksi.unshift({
+        id: newTrxId,
+        timestamp: timestampStr,
+        kategori: k.kategori || 'Pelunasan Kasbon',
+        detail: k.detail || `Pelunasan Kasbon (${k.id})`,
+        qty: Number(k.qty) || 1,
+        modal: modal,
+        jual: jual,
+        untung: jual - modal,
+        status: 'Lunas',
+        pelanggan: k.pelanggan,
+        bayar: jual,
+        kembalian: 0
+      });
+
+      calculateDashboardMetrics();
+      saveData();
+      renderAllViews();
+
+      await syncKeGoogleSheets({
+        action: 'lunasiKasbon',
+        id: k.id,
+        trxId: newTrxId,
+        timestamp: timestampStr,
+        kategori: k.kategori || 'Pelunasan Kasbon',
+        detail: k.detail || `Pelunasan Kasbon (${k.id})`,
+        qty: Number(k.qty) || 1,
+        modal: modal,
+        hutang: jual,
+        pelanggan: k.pelanggan
+      });
     }
 
     function getBiayaOperasionalInput() {
