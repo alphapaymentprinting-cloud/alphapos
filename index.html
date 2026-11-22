@@ -904,7 +904,13 @@
     <div class="glass-card p-6 rounded-3xl w-full max-w-sm space-y-4 border border-slate-200 bg-white text-slate-900 shadow-2xl" id="print-area">
       <div class="text-center space-y-1">
         <div class="flex justify-center mb-2">
-          <img src="https://drive.google.com/uc?export=view&id=1GwiilZPULoICTSufUi4LqAb4WfauSnMd" alt="Logo Toko" class="w-16 h-16 object-contain rounded-xl shadow">
+          <img 
+            src="https://lh3.googleusercontent.com/d/1GwiilZPULoICTSufUi4LqAb4WfauSnMd=s200" 
+            alt="Logo Toko" 
+            crossorigin="anonymous"
+            onerror="this.style.display='none'"
+            class="w-16 h-16 object-contain rounded-xl shadow"
+          >
         </div>
         <h4 class="font-black text-lg">ALPHA RETAIL</h4>
         <p class="text-[10px] text-slate-500">Struk Pembayaran & Layanan Sah</p>
@@ -965,7 +971,7 @@
     let html5QrCode = null;
     let currentScanTarget = 'kasir';
     let currentPageTrx = 1;
-    let lastMutationTime = 0;
+    let pauseSyncUntil = 0;
 
     window.addEventListener('DOMContentLoaded', () => {
       const todayStr = new Date().toISOString().slice(0, 10);
@@ -1103,7 +1109,7 @@
     }
 
     async function backgroundSyncData() {
-      if (!GAS_API_URL || (Date.now() - lastMutationTime < 8000)) return;
+      if (!GAS_API_URL || Date.now() < pauseSyncUntil) return;
       try {
         const response = await fetch(GAS_API_URL);
         const result = await response.json();
@@ -1178,19 +1184,23 @@
         activeBtn.classList.remove('text-slate-700', 'hover:bg-slate-100', 'hover:text-slate-900');
       }
       const titles = {
-        'dashboard': 'Dashboard & Ringkasan',
+        'dashboard': 'Dashboard & Riwayat Transaksi',
         'kasir': 'Kasir Multi-Layanan',
-        'percetakan': 'Percetakan & Dokumen',
-        'produk': 'Stok Barang',
+        'produk': 'Stok Barang & Jasa',
         'servis': 'Servis PC & Upgrade',
         'kasbon': 'Buku Kasbon Piutang',
-        'operasional': 'Operasional Toko',
-        'bagilaba': 'Bagi Laba'
+        'operasional': 'Operasional & Bagi Laba'
       };
       document.getElementById('header-title-text').innerText = titles[tabId] || 'ALPHA';
+
+      // Render ulang data tab yang dibuka agar selalu sinkron tanpa refresh
       if (tabId === 'kasir') {
         filterProdukKasirList();
+        renderCart();
+      } else if (tabId === 'produk') {
+        renderTabelProduk();
       }
+
       if (window.innerWidth < 768) toggleSidebar();
     }
 
@@ -1205,24 +1215,24 @@
         document.getElementById('stat-trx-count').innerText = appData.dashboard.jumlahTrxBulanIni;
         document.getElementById('stat-untung').innerText = formatRupiah(appData.dashboard.untungBulanIni);
         document.getElementById('stat-piutang').innerText = formatRupiah(appData.dashboard.totalPiutang);
-        document.getElementById('stat-total-stok').innerText = (appData.dashboard.totalStokBarang || 0).toLocaleString('id-ID') + ' Unit';
-        document.getElementById('stat-jenis-barang').innerText = appData.dashboard.jumlahJenisBarang || 0;
-
+        document.getElementById('stat-stok-menipis').innerText = appData.dashboard.stokMenipisCount + ' Item';
         document.getElementById('dash-total-laba').innerText = formatRupiah(appData.dashboard.totalLabaKeseluruhan);
-        document.getElementById('dash-total-ops').innerText = formatRupiah(appData.dashboard.totalOperasionalSemua);
         document.getElementById('dash-saldo-tersedia').innerText = formatRupiah(appData.dashboard.saldoLabaTersedia);
+        document.getElementById('ops-total-laba').innerText = formatRupiah(appData.dashboard.totalLabaKeseluruhan);
+        document.getElementById('ops-saldo-tersedia').innerText = formatRupiah(appData.dashboard.saldoLabaTersedia);
       }
+      
       renderDashboardRiwayat();
-      filterProdukKasirList();
+      
+      // Selalu perbarui daftar produk di kasir dan tabel stok agar real-time tanpa refresh
+      renderKasirDropdowns();
       renderTabelProduk();
+
       if (!isBackground) {
-        renderCart();
-        renderTabelPercetakan();
         renderTabelServis();
         renderTabelKasbon();
+        hitungAlokasiLaba();
         renderTabelOperasional();
-        hitungBagiLaba();
-        renderTabelBagiLaba();
       }
     }
 
@@ -1936,7 +1946,11 @@
     async function bagikanStrukJPG() {
       const element = document.getElementById('print-area');
       element.style.display = 'block';
-      const canvas = await html2canvas(element, { scale: 2 });
+      const canvas = await html2canvas(element, { 
+        scale: 2, 
+        useCORS: true,      // Wajib ditambahkan agar gambar Google Drive ikut terekam ke JPG
+        allowTaint: false 
+      });
       const link = document.createElement('a');
       link.download = `Struk-${Date.now()}.jpg`;
       link.href = canvas.toDataURL('image/jpeg');
@@ -2031,10 +2045,34 @@
     }
 
     async function hapusProduk(id) {
-      if (!confirm('Hapus barang ini?')) return;
-      appData.produk = appData.produk.filter(p => p.id !== id);
-      calculateDashboardMetrics(); saveData(); renderAllViews();
-      await syncKeGoogleSheets({ action: 'hapusProduk', id: id });
+      if (!confirm('Hapus produk ini?')) return;
+
+      pauseSyncUntil = Date.now() + 10000;
+
+      // 1. Hapus dari daftar produk lokal (memastikan perbandingan string agar akurat)
+      appData.produk = appData.produk.filter(p => String(p.id) !== String(id));
+
+      // 2. Hapus juga dari keranjang kasir jika barang tersebut sedang dipilih
+      cart = cart.filter(c => String(c.id) !== String(id));
+
+      // 3. Perbarui metrik, simpan ke localStorage, dan render ulang seluruh tampilan (termasuk Kasir)
+      calculateDashboardMetrics();
+      saveData();
+      renderAllViews(false);
+
+      // 4. Kirim perintah hapus ke Google Sheets
+      if (GAS_API_URL) {
+        try {
+          await fetch(GAS_API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'hapusProduk', id: id })
+          });
+        } catch (err) {
+          console.error('Gagal hapus produk di Sheets:', err);
+        }
+      }
     }
 
     async function simpanDataProduk() {
