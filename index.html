@@ -22,8 +22,9 @@
   <!-- Google Fonts & FontAwesome -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- HTML2Canvas & QR Scanner -->
+  <!-- HTML2Canvas untuk bagikan struk sebagai gambar JPG -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- HTML5 QR Code Scanner Library -->
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -83,7 +84,7 @@
       <nav id="nav-menu" class="flex flex-col p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-160px)] custom-scrollbar">
         <div class="text-[9px] font-bold uppercase tracking-wider text-slate-400 px-3 py-1">Utama</div>
         <button onclick="switchTab('dashboard')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-700 hover:bg-slate-100 hover:text-slate-900 active-nav bg-orange-500 text-white shadow-md shadow-orange-500/20" data-target="dashboard">
-          <i class="fas fa-chart-pie w-4 text-center text-orange-500"></i> Dashboard
+          <i class="fas fa-chart-pie w-4 text-center text-orange-500 group-hover:text-orange-600"></i> Dashboard
         </button>
         <button onclick="switchTab('kasir')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-700 hover:bg-slate-100 hover:text-slate-900" data-target="kasir">
           <i class="fas fa-cash-register w-4 text-center text-amber-500"></i> Kasir Penjualan
@@ -91,16 +92,16 @@
 
         <div class="text-[9px] font-bold uppercase tracking-wider text-slate-400 px-3 pt-3 pb-1">Manajemen</div>
         <button onclick="switchTab('produk')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-700 hover:bg-slate-100 hover:text-slate-900" data-target="produk">
-          <i class="fas fa-boxes w-4 text-center text-emerald-500"></i> Stok & Jasa <span class="text-[9px] text-slate-400 font-normal ml-auto">(Produk_Layanan)</span>
+          <i class="fas fa-boxes w-4 text-center text-emerald-500"></i> Stok & Jasa
         </button>
         <button onclick="switchTab('servis')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-700 hover:bg-slate-100 hover:text-slate-900" data-target="servis">
-          <i class="fas fa-laptop-medical w-4 text-center text-blue-500"></i> Servis PC <span class="text-[9px] text-slate-400 font-normal ml-auto">(Servis_PC)</span>
+          <i class="fas fa-laptop-medical w-4 text-center text-blue-500"></i> Servis PC
         </button>
         <button onclick="switchTab('kasbon')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-700 hover:bg-slate-100 hover:text-slate-900" data-target="kasbon">
-          <i class="fas fa-file-invoice-dollar w-4 text-center text-rose-500"></i> Buku Kasbon <span class="text-[9px] text-slate-400 font-normal ml-auto">(Kasbon)</span>
+          <i class="fas fa-file-invoice-dollar w-4 text-center text-rose-500"></i> Buku Kasbon
         </button>
         <button onclick="switchTab('operasional')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition text-slate-700 hover:bg-slate-100 hover:text-slate-900" data-target="operasional">
-          <i class="fas fa-wallet w-4 text-center text-purple-500"></i> Operasional & Laba <span class="text-[9px] text-slate-400 font-normal ml-auto">(Operasional_Alokasi)</span>
+          <i class="fas fa-wallet w-4 text-center text-purple-500"></i> Operasional & Laba
         </button>
       </nav>
     </div>
@@ -141,7 +142,7 @@
           <i class="fas fa-bars text-base"></i>
         </button>
         <div>
-          <span class="text-[10px] font-bold uppercase tracking-wider text-orange-600">Sistem Toko Multi-Sheet</span>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-orange-600">Sistem Toko</span>
           <h2 id="header-title-text" class="text-lg md:text-xl font-extrabold text-slate-900 tracking-tight">Dashboard & Ringkasan</h2>
         </div>
       </div>
@@ -187,7 +188,7 @@
               </div>
             </div>
             <div class="text-2xl font-extrabold text-rose-600" id="stat-piutang">Rp 0</div>
-            <div class="text-[11px] text-slate-500 mt-1 font-medium">Belum lunas (Kasbon)</div>
+            <div class="text-[11px] text-slate-500 mt-1 font-medium">Belum lunas</div>
           </div>
 
           <div class="glass-card p-5 rounded-3xl relative overflow-hidden group hover:border-amber-500/40 transition duration-300">
@@ -198,7 +199,7 @@
               </div>
             </div>
             <div class="text-2xl font-extrabold text-amber-600" id="stat-stok-menipis">0 Item</div>
-            <div class="text-[11px] text-slate-500 mt-1 font-medium">Perlu restock (Produk_Layanan)</div>
+            <div class="text-[11px] text-slate-500 mt-1 font-medium">Perlu restock</div>
           </div>
         </div>
 
@@ -206,7 +207,7 @@
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
               <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <i class="fas fa-vault text-purple-600"></i> Akumulasi Laba & Operasional <span class="text-xs font-normal text-slate-500">(Operasional_Alokasi)</span>
+                <i class="fas fa-vault text-purple-600"></i> Akumulasi Laba & Operasional
               </h3>
               <p class="text-xs text-slate-500 mt-1">Ringkasan laba kotor toko dan saldo siap alokasi</p>
             </div>
@@ -226,22 +227,22 @@
           </div>
         </div>
 
-        <!-- Riwayat Transaksi (Terhubung ke Sheet Transaksi) -->
+        <!-- Riwayat Transaksi dengan Search Bar, Pilihan Tampil Per Baris, Export, Import Excel, dan Hapus Massal -->
         <div class="glass-card p-6 rounded-3xl space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                Riwayat Transaksi <span class="text-[10px] px-2 py-0.5 bg-orange-100 text-orange-700 rounded-lg font-bold">Sheet: Transaksi</span>
-              </h3>
-              <p class="text-xs text-slate-500">Pencarian, edit, hapus, dan sinkronisasi langsung ke Google Sheets.</p>
+              <h3 class="text-base font-bold text-slate-900">Riwayat Transaksi</h3>
+              <p class="text-xs text-slate-500">Pencarian berdasarkan ID, pelanggan, atau detail, serta filter tampilan baris.</p>
             </div>
             
             <div class="flex flex-wrap items-center gap-1.5 overflow-x-auto py-1">
+              <!-- Search Bar -->
               <div class="relative flex items-center">
                 <i class="fas fa-search absolute left-3 text-slate-400 text-[10px]"></i>
                 <input type="text" id="cari-riwayat-trx" oninput="currentPageTrx = 1; renderDashboardRiwayat();" placeholder="Cari ID / Pelanggan..." class="bg-white border border-slate-200 rounded-lg pl-8 pr-3 py-1 text-[11px] text-slate-900 focus:outline-none focus:border-orange-500 w-36 sm:w-44 shadow-sm">
               </div>
 
+              <!-- Pilihan Tampil Per Baris (Default 10) -->
               <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-lg px-2 py-1 shrink-0 shadow-sm">
                 <span class="text-[10px] text-slate-500">Tampil:</span>
                 <select id="per-page-trx" onchange="currentPageTrx = 1; renderDashboardRiwayat();" class="bg-transparent text-[11px] text-slate-900 focus:outline-none font-bold">
@@ -252,6 +253,7 @@
                 </select>
               </div>
 
+              <!-- Filter Bulan -->
               <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-lg px-2 py-1 shrink-0 shadow-sm">
                 <span class="text-[10px] text-slate-500">Bulan:</span>
                 <input type="month" id="filter-bulan" onchange="currentPageTrx = 1; calculateDashboardMetrics(); renderDashboardRiwayat();" class="bg-transparent text-[11px] text-slate-900 focus:outline-none">
@@ -260,6 +262,7 @@
               
               <div class="h-4 w-[1px] bg-slate-200 mx-0.5 shrink-0"></div>
 
+              <!-- Tombol Aksi Cepat -->
               <button onclick="exportDataExcel()" class="w-8 h-8 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-700 border border-emerald-300 flex items-center justify-center transition shrink-0" title="Export Excel">
                 <i class="fas fa-file-excel text-xs"></i>
               </button>
@@ -288,13 +291,14 @@
                   <th class="py-3 px-3 text-right">Total Jual</th>
                   <th class="py-3 px-3 text-right">Laba</th>
                   <th class="py-3 px-3 text-center">Status</th>
-                  <th class="py-3 px-3 text-center">Aksi (Edit / Hapus)</th>
+                  <th class="py-3 px-3 text-center">Aksi</th>
                 </tr>
               </thead>
               <tbody id="tabel-riwayat-dashboard" class="divide-y divide-slate-200 text-xs text-slate-700"></tbody>
             </table>
           </div>
 
+          <!-- Pagination Controls -->
           <div id="pagination-trx-container" class="flex flex-col sm:flex-row items-center justify-between pt-3 border-t border-slate-200 text-xs text-slate-500 gap-2">
             <div id="pagination-info">Menampilkan 0 dari 0 data</div>
             <div id="pagination-buttons" class="flex items-center gap-1"></div>
@@ -325,12 +329,13 @@
           </button>
         </div>
 
+        <!-- Kasir Barang Fisik & Cart -->
         <div id="kasir-fisik-container" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div class="lg:col-span-2 glass-card p-6 rounded-3xl space-y-4">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div class="relative flex-1">
                 <i class="fas fa-search absolute left-4 top-3.5 text-slate-400 text-xs"></i>
-                <input type="text" id="cari-produk-kasir" oninput="filterProdukKasirList()" placeholder="Cari produk fisik (Produk_Layanan)..." class="w-full bg-white border border-slate-200 rounded-2xl pl-10 pr-4 py-3 text-xs text-slate-900 focus:outline-none focus:border-orange-500 font-medium shadow-sm">
+                <input type="text" id="cari-produk-kasir" oninput="filterProdukKasirList()" placeholder="Cari produk fisik..." class="w-full bg-white border border-slate-200 rounded-2xl pl-10 pr-4 py-3 text-xs text-slate-900 focus:outline-none focus:border-orange-500 font-medium shadow-sm">
               </div>
               <div class="flex gap-2 shrink-0">
                 <button onclick="openBarcodeScanner('kasir')" class="px-4 py-3 rounded-2xl bg-white hover:bg-slate-50 text-orange-600 border border-slate-200 font-bold text-xs transition flex items-center justify-center gap-2 shadow-sm">
@@ -363,7 +368,7 @@
                 <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Status Pembayaran</label>
                 <select id="cart-status-bayar" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-orange-500 font-medium shadow-sm">
                   <option value="Lunas">Lunas</option>
-                  <option value="Kasbon">Kasbon (Masuk ke Kasbon)</option>
+                  <option value="Kasbon">Kasbon (Piutang)</option>
                 </select>
               </div>
               <div>
@@ -379,16 +384,17 @@
                 <span id="cart-grand-total" class="font-extrabold text-orange-600 text-base">Rp 0</span>
               </div>
               <button onclick="prosesCheckoutCart()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-bold text-xs transition shadow-lg shadow-orange-500/20">
-                Proses Transaksi & Update Sheet
+                Proses Transaksi & Cetak Struk
               </button>
             </div>
           </div>
         </div>
 
+        <!-- Kasir Digital -->
         <div id="kasir-digital-container" class="hidden glass-card p-6 rounded-3xl space-y-5">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
             <h3 id="digital-form-title" class="text-base font-bold text-slate-900 flex items-center gap-2">
-              <i class="fas fa-mobile-alt text-orange-600"></i> Input Transaksi Digital / Jasa
+              <i class="fas fa-mobile-alt text-orange-600"></i> Input Transaksi Digital
             </h3>
             <button type="button" onclick="addDigitalRow()" class="px-3 py-2 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 text-orange-600 border border-orange-500/30 text-xs font-bold transition flex items-center gap-1.5">
               <i class="fas fa-plus"></i> Tambah Baris
@@ -406,7 +412,7 @@
               <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Status Pembayaran</label>
               <select id="dig-status-bayar" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-orange-500 font-medium shadow-sm">
                 <option value="Lunas">Lunas</option>
-                <option value="Kasbon">Kasbon (Masuk ke Kasbon)</option>
+                <option value="Kasbon">Kasbon (Piutang)</option>
               </select>
             </div>
             <div>
@@ -415,7 +421,7 @@
             </div>
           </div>
           <div class="flex justify-between items-center text-xs text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-            <span>Uang Kembalian:</span>
+            <span>Uang Kembalian Digital:</span>
             <span id="dig-kembalian-text" class="font-bold text-emerald-600">Rp 0</span>
           </div>
 
@@ -437,14 +443,12 @@
         </div>
       </section>
 
-      <!-- ================= TAB 3: STOK BARANG & JASA (Produk_Layanan) ================= -->
+      <!-- ================= TAB 3: STOK BARANG & JASA ================= -->
       <section id="tab-produk" class="tab-content hidden space-y-6">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-              Stok & Jasa <span class="text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-xl font-bold">Sheet: Produk_Layanan</span>
-            </h2>
-            <p class="text-xs text-slate-500 mt-0.5">Kelola inventaris barang fisik dan daftar jasa toko.</p>
+            <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Stok Barang & Jasa</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Kelola inventaris dan foto barang langsung dari kamera.</p>
           </div>
           <button onclick="openModalProduk()" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs transition shadow-lg shadow-emerald-500/20 flex items-center gap-2">
             <i class="fas fa-plus"></i> Tambah Barang / Jasa
@@ -466,7 +470,7 @@
                   <th class="py-3 px-4 text-right">Harga Modal</th>
                   <th class="py-3 px-4 text-right">Harga Jual</th>
                   <th class="py-3 px-4 text-center">Stok</th>
-                  <th class="py-3 px-4 text-center">Aksi (Edit / Hapus)</th>
+                  <th class="py-3 px-4 text-center">Aksi</th>
                 </tr>
               </thead>
               <tbody id="tabel-produk-body" class="divide-y divide-slate-200 text-xs text-slate-700"></tbody>
@@ -475,14 +479,12 @@
         </div>
       </section>
 
-      <!-- ================= TAB 4: SERVIS PC (Servis_PC) ================= -->
+      <!-- ================= TAB 4: SERVIS & UPGRADE PC ================= -->
       <section id="tab-servis" class="tab-content hidden space-y-6">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-              Servis & Upgrade PC <span class="text-xs px-2.5 py-1 bg-blue-100 text-blue-700 rounded-xl font-bold">Sheet: Servis_PC</span>
-            </h2>
-            <p class="text-xs text-slate-500 mt-0.5">Catat unit masuk, cetak bukti servis, ubah status, edit, dan hapus.</p>
+            <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Servis & Upgrade PC</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Catat unit masuk dan status pengerjaan.</p>
           </div>
           <button onclick="openModalServis()" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs transition shadow-lg shadow-blue-500/20 flex items-center gap-2">
             <i class="fas fa-laptop-medical"></i> Input Servis Masuk
@@ -499,7 +501,7 @@
                 <th class="py-3 px-4">Keluhan</th>
                 <th class="py-3 px-4 text-right">Estimasi Biaya</th>
                 <th class="py-3 px-4 text-center">Status</th>
-                <th class="py-3 px-4 text-center">Aksi (Cetak / Edit / Hapus)</th>
+                <th class="py-3 px-4 text-center">Aksi (Edit / Cetak / Hapus)</th>
               </tr>
             </thead>
             <tbody id="tabel-servis-body" class="divide-y divide-slate-200 text-xs text-slate-700"></tbody>
@@ -507,14 +509,12 @@
         </div>
       </section>
 
-      <!-- ================= TAB 5: BUKU KASBON (Kasbon) ================= -->
+      <!-- ================= TAB 5: BUKU KASBON ================= -->
       <section id="tab-kasbon" class="tab-content hidden space-y-6">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-              Buku Kasbon Piutang <span class="text-xs px-2.5 py-1 bg-rose-100 text-rose-700 rounded-xl font-bold">Sheet: Kasbon</span>
-            </h2>
-            <p class="text-xs text-slate-500 mt-0.5">Pantau catatan hutang pelanggan dan status pelunasan.</p>
+            <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Buku Kasbon Piutang</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Pantau catatan hutang pelanggan.</p>
           </div>
         </div>
 
@@ -527,7 +527,7 @@
                 <th class="py-3 px-4">No HP</th>
                 <th class="py-3 px-4 text-right">Total Hutang</th>
                 <th class="py-3 px-4 text-center">Status</th>
-                <th class="py-3 px-4 text-center">Aksi (Lunasi)</th>
+                <th class="py-3 px-4 text-center">Aksi</th>
               </tr>
             </thead>
             <tbody id="tabel-kasbon-body" class="divide-y divide-slate-200 text-xs text-slate-700"></tbody>
@@ -535,14 +535,12 @@
         </div>
       </section>
 
-      <!-- ================= TAB 6: OPERASIONAL & LABA (Operasional_Alokasi) ================= -->
+      <!-- ================= TAB 6: OPERASIONAL & BAGI LABA ================= -->
       <section id="tab-operasional" class="tab-content hidden space-y-6">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-              Operasional & Bagi Laba <span class="text-xs px-2.5 py-1 bg-purple-100 text-purple-700 rounded-xl font-bold">Sheet: Operasional_Alokasi</span>
-            </h2>
-            <p class="text-xs text-slate-500 mt-0.5">Alokasikan laba bersih toko untuk operasional, gaji, tabungan, dan modal.</p>
+            <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Operasional & Bagi Laba</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Alokasikan laba bersih toko.</p>
           </div>
         </div>
 
@@ -559,7 +557,7 @@
                 <div id="ops-saldo-tersedia" class="text-lg font-extrabold text-purple-600 mt-0.5">Rp 0</div>
               </div>
               <div>
-                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Catatan Alokasi</label>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Catatan</label>
                 <input type="text" id="ops-catatan" placeholder="Contoh: Alokasi Bulan Ini" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-purple-500 font-medium shadow-sm">
               </div>
 
@@ -642,7 +640,7 @@
 
   <!-- ================= MODALS ================= -->
 
-  <!-- Modal Produk / Layanan -->
+  <!-- Modal Tambah/Edit Produk dengan Kamera HP -->
   <div id="modal-produk" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md hidden flex items-center justify-center p-4">
     <div class="glass-card p-6 rounded-3xl w-full max-w-md space-y-4 border border-slate-200 max-h-[90vh] overflow-y-auto custom-scrollbar shadow-xl">
       <div class="flex items-center justify-between pb-3 border-b border-slate-200">
@@ -668,20 +666,24 @@
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Nama Produk / Jasa</label>
           <input type="text" id="prod-nama" required placeholder="Nama produk" class="w-full bg-white border border-slate-200 rounded-2xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-orange-500 font-medium shadow-sm">
         </div>
+        
+        <!-- Bagian Foto Barang dari Kamera HP -->
         <div>
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Foto Barang (Kamera HP / URL)</label>
           <div class="flex gap-2 mb-2">
-            <input type="text" id="prod-gambar" placeholder="URL Foto atau ambil dari kamera" class="flex-1 bg-white border border-slate-200 rounded-2xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-orange-500 font-medium shadow-sm">
+            <input type="text" id="prod-gambar" placeholder="URL Foto atau klik Ambil Foto" class="flex-1 bg-white border border-slate-200 rounded-2xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-orange-500 font-medium shadow-sm">
             <button type="button" onclick="openCameraForProduct()" class="px-4 py-3 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs transition flex items-center gap-1.5 shrink-0 shadow-sm">
               <i class="fas fa-camera"></i> Kamera
             </button>
           </div>
           <input type="file" id="prod-camera-input" accept="image/*" capture="environment" class="hidden" onchange="handleCameraCapture(event)">
+          <!-- Pratinjau Foto -->
           <div id="prod-foto-preview-box" class="hidden relative w-full h-36 bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden mt-2">
             <img id="prod-foto-preview-img" src="" class="w-full h-full object-contain">
             <button type="button" onclick="hapusFotoProduk()" class="absolute top-2 right-2 px-2.5 py-1 bg-rose-600 text-white rounded-xl text-[10px] font-bold shadow">Hapus Foto</button>
           </div>
         </div>
+
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Harga Modal (Rp)</label>
@@ -699,12 +701,12 @@
       </div>
       <div class="flex gap-3 pt-2">
         <button onclick="closeModalProduk()" class="flex-1 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-2xl text-xs transition">Batal</button>
-        <button onclick="simpanDataProduk()" class="flex-1 py-3 bg-gradient-to-r from-orange-600 to-amber-600 text-white font-bold rounded-2xl text-xs transition shadow-md">Simpan ke Sheets</button>
+        <button onclick="simpanDataProduk()" class="flex-1 py-3 bg-gradient-to-r from-orange-600 to-amber-600 text-white font-bold rounded-2xl text-xs transition shadow-md">Simpan</button>
       </div>
     </div>
   </div>
 
-  <!-- Modal Servis PC -->
+  <!-- Modal Input/Edit Servis PC -->
   <div id="modal-servis" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md hidden flex items-center justify-center p-4">
     <div class="glass-card p-6 rounded-3xl w-full max-w-md space-y-4 border border-slate-200 shadow-xl">
       <div class="flex items-center justify-between pb-3 border-b border-slate-200">
@@ -723,7 +725,7 @@
         </div>
         <div>
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Perangkat</label>
-          <input type="text" id="srv-perangkat" required placeholder="Merek & Tipe Laptop/PC" class="w-full bg-white border border-slate-200 rounded-2xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-blue-500 font-medium shadow-sm">
+          <input type="text" id="srv-perangkat" required placeholder="Merek & Tipe" class="w-full bg-white border border-slate-200 rounded-2xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-blue-500 font-medium shadow-sm">
         </div>
         <div>
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Keluhan</label>
@@ -736,7 +738,7 @@
       </div>
       <div class="flex gap-3 pt-2">
         <button onclick="closeModalServis()" class="flex-1 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-2xl text-xs transition">Batal</button>
-        <button onclick="simpanDataServis()" class="flex-1 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-2xl text-xs transition shadow-md">Simpan Servis</button>
+        <button onclick="simpanDataServis()" class="flex-1 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-2xl text-xs transition shadow-md">Simpan</button>
       </div>
     </div>
   </div>
@@ -746,10 +748,10 @@
     <div class="glass-card p-6 rounded-3xl w-full max-w-sm space-y-4 border border-slate-200 bg-white text-slate-900 shadow-2xl" id="print-area">
       <div class="text-center space-y-1">
         <div class="flex justify-center mb-2">
-          <div class="w-14 h-14 rounded-xl bg-orange-600 text-white flex items-center justify-center font-black text-2xl shadow">α</div>
+          <img src="https://drive.google.com/uc?export=view&id=1GwiilZPULoICTSufUi4LqAb4WfauSnMd" alt="Logo Toko" class="w-16 h-16 object-contain rounded-xl shadow">
         </div>
-        <h4 class="font-black text-lg">ALPHA RETAIL & SERVIS</h4>
-        <p class="text-[10px] text-slate-500">Bukti Transaksi & Layanan Resmi</p>
+        <h4 class="font-black text-lg">ALPHA RETAIL</h4>
+        <p class="text-[10px] text-slate-500">Struk Pembayaran & Layanan Sah</p>
       </div>
       <div class="border-t border-b border-dashed border-slate-300 py-2 text-[11px] space-y-1 text-slate-700">
         <div class="flex justify-between"><span>No ID:</span><span id="struk-id">-</span></div>
@@ -788,12 +790,12 @@
         <button onclick="closeModalApiUrl()" class="text-slate-400 hover:text-slate-900 p-1"><i class="fas fa-times"></i></button>
       </div>
       <div class="space-y-3 text-xs">
-        <p class="text-slate-600 leading-relaxed">Tempelkan link <b>Web App URL (`/exec`)</b> dari Google Apps Script agar semua data terhubung langsung ke sheet masing-masing:</p>
+        <p class="text-slate-600 leading-relaxed">Tempelkan link <b>Web App URL (`/exec`)</b> dari Google Apps Script:</p>
         <input type="url" id="input-gas-url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-white border border-slate-200 rounded-2xl px-4 py-3 text-xs text-slate-900 focus:outline-none focus:border-emerald-500 font-medium shadow-sm">
       </div>
       <div class="flex gap-3 pt-2">
         <button onclick="hapusApiUrl()" class="py-3 px-4 bg-rose-50 text-rose-600 font-bold rounded-2xl text-xs transition border border-rose-200">Putuskan</button>
-        <button onclick="simpanApiUrl()" class="flex-1 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold rounded-2xl text-xs transition shadow-md">Simpan Koneksi</button>
+        <button onclick="simpanApiUrl()" class="flex-1 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold rounded-2xl text-xs transition shadow-md">Simpan</button>
       </div>
     </div>
   </div>
@@ -806,12 +808,13 @@
     let currentKasirMode = 'fisik';
     let html5QrCode = null;
     let currentScanTarget = 'kasir';
-    let currentPageTrx = 1;
+    let currentPageTrx = 1; // Halaman aktif pagination riwayat transaksi
 
     window.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('#current-date-str').forEach(el => el.innerText = new Date().toLocaleDateString('id-ID', { dateStyle: 'full' }));
       loadAllData();
       
+      // Auto-sync real-time dari Google Sheets setiap 15 detik di latar belakang tanpa refresh
       setInterval(() => {
         if (GAS_API_URL) backgroundSyncData();
       }, 15000);
@@ -931,7 +934,9 @@
           calculateDashboardMetrics();
           renderAllViews(true);
         }
-      } catch (err) { console.error("Background sync error:", err); }
+      } catch (err) {
+        console.error("Background sync error:", err);
+      }
     }
 
     function saveData() { localStorage.setItem('alpha_pos_data', JSON.stringify(appData)); }
@@ -975,12 +980,12 @@
         activeBtn.classList.remove('text-slate-700', 'hover:bg-slate-100', 'hover:text-slate-900');
       }
       const titles = {
-        'dashboard': 'Dashboard & Riwayat Transaksi (Transaksi)',
+        'dashboard': 'Dashboard & Riwayat Transaksi',
         'kasir': 'Kasir Multi-Layanan',
-        'produk': 'Stok Barang & Jasa (Produk_Layanan)',
-        'servis': 'Servis PC & Upgrade (Servis_PC)',
-        'kasbon': 'Buku Kasbon Piutang (Kasbon)',
-        'operasional': 'Operasional & Bagi Laba (Operasional_Alokasi)'
+        'produk': 'Stok Barang & Jasa',
+        'servis': 'Servis PC & Upgrade',
+        'kasbon': 'Buku Kasbon Piutang',
+        'operasional': 'Operasional & Bagi Laba'
       };
       document.getElementById('header-title-text').innerText = titles[tabId] || 'ALPHA';
       if (window.innerWidth < 768) toggleSidebar();
@@ -1014,16 +1019,18 @@
       }
     }
 
-    // ================= 1. RIWAYAT TRANSAKSI (Transaksi) =================
+    // ================= RIWAYAT TRANSAKSI: PENCARIAN & PAGINATION =================
     function renderDashboardRiwayat() {
       const filterBulan = document.getElementById('filter-bulan').value;
       const searchKeyword = (document.getElementById('cari-riwayat-trx')?.value || '').toLowerCase().trim();
-      const perPage = Number(document.getElementById('per-page-trx')?.value || 10);
+      const perPageSelect = document.getElementById('per-page-trx');
+      const perPage = perPageSelect ? Number(perPageSelect.value) : 10;
 
       const tbody = document.getElementById('tabel-riwayat-dashboard');
       if (!tbody) return;
       tbody.innerHTML = '';
 
+      // Filter berdasarkan bulan dan keyword pencarian (ID, Pelanggan, Detail, Kategori)
       const filtered = appData.transaksi.filter(t => {
         const matchBulan = !filterBulan || (t.timestamp && t.timestamp.startsWith(filterBulan));
         const matchSearch = !searchKeyword || 
@@ -1043,29 +1050,31 @@
       const paginatedData = filtered.slice(startIndex, startIndex + perPage);
 
       if (paginatedData.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-400">Tidak ada riwayat transaksi ditemukan di sheet Transaksi</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-400">Tidak ada riwayat transaksi ditemukan</td></tr>`;
         document.getElementById('pagination-info').innerText = `Menampilkan 0 dari 0 data`;
         document.getElementById('pagination-buttons').innerHTML = '';
         return;
       }
 
       paginatedData.forEach(t => {
+        const fotoIcon = t.foto ? `<span class="ml-1 text-emerald-600" title="Ada Lampiran Foto"><i class="fas fa-image"></i></span>` : '';
         tbody.innerHTML += `
           <tr class="hover:bg-slate-50 transition">
             <td class="py-3 px-3 text-center align-middle"><input type="checkbox" value="${t.id}" class="trx-checkbox rounded bg-white border-slate-300 w-4 h-4 text-orange-600 focus:ring-0 cursor-pointer"></td>
             <td class="py-3 px-3 align-middle"><div class="font-bold text-slate-900">${t.timestamp}</div><div class="text-[10px] text-slate-400">${t.id}</div></td>
             <td class="py-3 px-3 align-middle"><span class="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-slate-100 text-orange-600 inline-block border border-slate-200">${t.kategori}</span></td>
-            <td class="py-3 px-3 align-middle font-medium text-slate-900">${t.detail} <span class="text-slate-500 block text-[10px]">${t.pelanggan}</span></td>
+            <td class="py-3 px-3 align-middle font-medium text-slate-900">${t.detail} ${fotoIcon} <span class="text-slate-500 block text-[10px]">${t.pelanggan}</span></td>
             <td class="py-3 px-3 text-center align-middle">${t.qty}</td>
             <td class="py-3 px-3 text-right align-middle font-bold text-slate-900">${formatRupiah(t.jual)}</td>
             <td class="py-3 px-3 text-right align-middle font-bold text-emerald-600">${formatRupiah(t.untung)}</td>
             <td class="py-3 px-3 text-center align-middle"><span class="px-2.5 py-1 rounded-lg text-[10px] font-bold ${t.status === 'Lunas' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'} inline-block">${t.status}</span></td>
+            
             <td class="py-3 px-3 text-center align-middle">
               <div class="inline-flex items-center justify-center gap-1.5">
                 <button onclick="bukaStrukTransaksi('${t.id}')" class="w-8 h-8 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 flex items-center justify-center transition shadow-sm" title="Cetak/Bagikan Struk">
                   <i class="fas fa-print text-xs"></i>
                 </button>
-                <button onclick="hapusTransaksi('${t.id}')" class="w-8 h-8 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 flex items-center justify-center transition shadow-sm" title="Hapus dari Sheet">
+                <button onclick="hapusTransaksi('${t.id}')" class="w-8 h-8 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 flex items-center justify-center transition shadow-sm" title="Hapus">
                   <i class="fas fa-trash-alt text-xs"></i>
                 </button>
               </div>
@@ -1074,25 +1083,49 @@
         `;
       });
 
+      // Update Info Pagination
       const endItem = Math.min(startIndex + perPage, totalData);
-      document.getElementById('pagination-info').innerText = `Menampilkan ${startIndex + 1} - ${endItem} dari ${totalData} data`;
+      document.getElementById('pagination-info').innerText = `Menampilkan ${totalData > 0 ? startIndex + 1 : 0} - ${endItem} dari ${totalData} data`;
 
+      // Render Tombol Navigasi Pagination
       const btnContainer = document.getElementById('pagination-buttons');
       btnContainer.innerHTML = '';
+      
       if (totalPages > 1) {
-        btnContainer.innerHTML += `<button onclick="changePageTrx(${currentPageTrx - 1})" class="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-[11px] ${currentPageTrx === 1 ? 'opacity-40 cursor-not-allowed' : ''}"><i class="fas fa-chevron-left"></i></button>`;
+        btnContainer.innerHTML += `<button onclick="changePageTrx(${currentPageTrx - 1})" class="px-2.5 py-1 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-[11px] ${currentPageTrx === 1 ? 'opacity-40 cursor-not-allowed' : ''}"><i class="fas fa-chevron-left"></i></button>`;
+        
         for (let i = 1; i <= totalPages; i++) {
           if (i === 1 || i === totalPages || (i >= currentPageTrx - 1 && i <= currentPageTrx + 1)) {
-            btnContainer.innerHTML += `<button onclick="changePageTrx(${i})" class="px-2.5 py-1 rounded-lg text-[11px] font-bold ${i === currentPageTrx ? 'bg-orange-500 text-white' : 'bg-white border border-slate-200 text-slate-700'}">${i}</button>`;
+            btnContainer.innerHTML += `<button onclick="changePageTrx(${i})" class="px-2.5 py-1 rounded-lg text-[11px] font-bold ${i === currentPageTrx ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20' : 'bg-white border border-slate-200 hover:bg-slate-50 text-slate-700'}">${i}</button>`;
+          } else if (i === currentPageTrx - 2 || i === currentPageTrx + 2) {
+            btnContainer.innerHTML += `<span class="px-1 text-slate-400">...</span>`;
           }
         }
-        btnContainer.innerHTML += `<button onclick="changePageTrx(${currentPageTrx + 1})" class="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-[11px] ${currentPageTrx === totalPages ? 'opacity-40 cursor-not-allowed' : ''}"><i class="fas fa-chevron-right"></i></button>`;
+
+        btnContainer.innerHTML += `<button onclick="changePageTrx(${currentPageTrx + 1})" class="px-2.5 py-1 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-[11px] ${currentPageTrx === totalPages ? 'opacity-40 cursor-not-allowed' : ''}"><i class="fas fa-chevron-right"></i></button>`;
       }
     }
 
     function changePageTrx(targetPage) {
-      currentPageTrx = targetPage;
-      renderDashboardRiwayat();
+      const perPage = Number(document.getElementById('per-page-trx')?.value || 10);
+      const filterBulan = document.getElementById('filter-bulan').value;
+      const searchKeyword = (document.getElementById('cari-riwayat-trx')?.value || '').toLowerCase().trim();
+
+      const filtered = appData.transaksi.filter(t => {
+        const matchBulan = !filterBulan || (t.timestamp && t.timestamp.startsWith(filterBulan));
+        const matchSearch = !searchKeyword || 
+          (t.id && String(t.id).toLowerCase().includes(searchKeyword)) ||
+          (t.detail && String(t.detail).toLowerCase().includes(searchKeyword)) ||
+          (t.pelanggan && String(t.pelanggan).toLowerCase().includes(searchKeyword)) ||
+          (t.kategori && String(t.kategori).toLowerCase().includes(searchKeyword));
+        return matchBulan && matchSearch;
+      });
+
+      const totalPages = Math.ceil(filtered.length / perPage) || 1;
+      if (targetPage >= 1 && targetPage <= totalPages) {
+        currentPageTrx = targetPage;
+        renderDashboardRiwayat();
+      }
     }
 
     function toggleSelectAllTrx(master) {
@@ -1101,13 +1134,14 @@
 
     function resetFilterBulan() {
       document.getElementById('filter-bulan').value = '';
-      document.getElementById('cari-riwayat-trx').value = '';
+      const searchBox = document.getElementById('cari-riwayat-trx');
+      if (searchBox) searchBox.value = '';
       currentPageTrx = 1;
       calculateDashboardMetrics();
       renderDashboardRiwayat();
     }
 
-    async function kirimKeBackend(payload) {
+    async function syncKeGoogleSheets(payload) {
       if (!GAS_API_URL) return;
       try {
         await fetch(GAS_API_URL, {
@@ -1116,89 +1150,148 @@
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
-      } catch (err) { console.error("Sinkronisasi Sheets gagal:", err); }
+      } catch (err) {
+        console.error("Gagal sinkronisasi ke Google Sheets:", err);
+      }
     }
 
     async function hapusTransaksi(id) {
-      if (!confirm('Hapus transaksi ini dari sheet Transaksi?')) return;
+      if (!confirm('Hapus transaksi ini?')) return;
       appData.transaksi = appData.transaksi.filter(t => t.id !== id);
       calculateDashboardMetrics(); saveData(); renderAllViews();
-      await kirimKeBackend({ action: 'hapusTransaksi', id: id });
+
+      if (GAS_API_URL) {
+        try {
+          await fetch(GAS_API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'hapus', id: id })
+          });
+        } catch (err) { console.error('Gagal hapus di Sheets:', err); }
+      }
     }
 
     async function hapusTransaksiMasal() {
       const checked = document.querySelectorAll('.trx-checkbox:checked');
-      if (checked.length === 0) { alert('Pilih transaksi yang ingin dihapus!'); return; }
+      if (checked.length === 0) { alert('Pilih transaksi yang ingin dihapus terlebih dahulu!'); return; }
       if (!confirm(`Hapus ${checked.length} transaksi terpilih?`)) return;
 
-      const ids = Array.from(checked).map(cb => cb.value);
-      appData.transaksi = appData.transaksi.filter(t => !ids.includes(t.id));
+      const idsToRemove = Array.from(checked).map(cb => cb.value);
+      appData.transaksi = appData.transaksi.filter(t => !idsToRemove.includes(t.id));
       calculateDashboardMetrics(); saveData(); renderAllViews();
-      for (let id of ids) {
-        await kirimKeBackend({ action: 'hapusTransaksi', id: id });
+      alert('Transaksi terpilih berhasil dihapus!');
+
+      if (GAS_API_URL) {
+        try {
+          for (let id of idsToRemove) {
+            await fetch(GAS_API_URL, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'hapus', id: id })
+            });
+          }
+        } catch (err) { console.error('Gagal hapus massal di Sheets:', err); }
       }
     }
 
     function downloadTemplateImport() {
       const templateData = [
         ["ID Transaksi", "Timestamp", "Kategori", "Detail Barang/Layanan", "Qty", "Harga Modal", "Harga Jual", "Keuntungan", "Status Bayar", "Nama Pelanggan"],
-        ["TRX-2026112201", "2026-11-22 08:30", "Fisik", "Kabel Data Type-C (1x)", 1, 15000, 30000, "=G2-F2", "Lunas", "Umum"]
+        ["TRX-261122001", "2026-11-22 08:30", "Fisik", "Kabel Data Type-C (1x)", 1, 15000, 30000, "=G2-F2", "Lunas", "Umum"],
+        ["TRX-261122002", "2026-11-22 09:15", "Pulsa & Data", "Telkomsel 10rb (081234567890)", 1, 10200, 12000, "=G3-F3", "Lunas", "Budi"]
       ];
-      const ws = XLSX.utils.aoa_to_sheet(templateData);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Transaksi");
-      XLSX.writeFile(wb, `Template_Import_Transaksi.xlsx`);
+      const worksheet = XLSX.utils.aoa_to_sheet(templateData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Transaksi");
+      XLSX.writeFile(workbook, `Template_Import_Transaksi_${new Date().toISOString().slice(0, 10)}.xlsx`);
     }
 
     async function importDataExcel(event) {
       const file = event.target.files[0];
       if (!file) return;
+      
       const reader = new FileReader();
       reader.onload = async function(e) {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
-        if (rows.length <= 1) { alert('File kosong.'); return; }
-        
-        showLoading(true, 'Mengimport ke Sheet Transaksi...');
-        for (let i = 1; i < rows.length; i++) {
-          const c = rows[i];
-          if (!c || !c[0]) continue;
-          const modal = Number(c[5]) || 0;
-          const jual = Number(c[6]) || 0;
-          const trx = {
-            action: 'simpanTransaksi',
-            id: String(c[0]), timestamp: String(c[1]), kategori: String(c[2]), detail: String(c[3]),
-            qty: Number(c[4]) || 1, modal: modal, jual: jual, untung: jual - modal,
-            status: String(c[8] || 'Lunas'), pelanggan: String(c[9] || 'Umum')
-          };
-          appData.transaksi.unshift(trx);
-          await kirimKeBackend(trx);
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+          const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+          
+          if (rows.length <= 1) { 
+            alert('File Excel kosong atau format tidak valid.'); 
+            return; 
+          }
+          
+          let importedCount = 0;
+          showLoading(true, 'Mengimport & Menyinkronkan ke Google Sheets...');
+
+          for (let i = 1; i < rows.length; i++) {
+            const cols = rows[i];
+            if (!cols || cols.length === 0 || !cols[0]) continue;
+            
+            const modal = Number(cols[5]) || 0;
+            const jual = Number(cols[6]) || 0;
+            const untung = (cols[7] !== '' && !isNaN(cols[7])) ? Number(cols[7]) : (jual - modal);
+
+            const trxBaru = {
+              id: String(cols[0] || 'TRX-' + Date.now() + i),
+              timestamp: String(cols[1] || new Date().toISOString().slice(0, 10) + ' ' + new Date().toTimeString().slice(0, 5)),
+              kategori: String(cols[2] || 'Fisik'),
+              detail: String(cols[3] || 'Import Data'),
+              qty: Number(cols[4]) || 1,
+              modal: modal,
+              jual: jual,
+              untung: untung,
+              status: String(cols[8] || 'Lunas'),
+              pelanggan: String(cols[9] || 'Umum')
+            };
+
+            appData.transaksi.unshift(trxBaru);
+            importedCount++;
+            await syncKeGoogleSheets(trxBaru);
+          }
+
+          calculateDashboardMetrics(); 
+          saveData(); 
+          renderAllViews();
+          showLoading(false);
+          
+          event.target.value = '';
+          alert(`Berhasil mengimport ${importedCount} data transaksi, dan data langsung masuk ke omzet & keuntungan dashboard!`);
+        } catch (err) {
+          showLoading(false);
+          console.error(err);
+          alert('Terjadi kesalahan saat membaca file Excel.');
         }
-        calculateDashboardMetrics(); saveData(); renderAllViews();
-        showLoading(false);
-        alert('Import berhasil tersinkronisasi ke Google Sheets!');
       };
       reader.readAsArrayBuffer(file);
     }
 
     function exportDataExcel() {
       const dataExport = appData.transaksi || [];
-      if (dataExport.length === 0) { alert('Data transaksi kosong!'); return; }
+      if (dataExport.length === 0) {
+        alert('Data riwayat transaksi masih kosong!');
+        return;
+      }
       const headers = ['ID', 'Timestamp', 'Kategori', 'Detail', 'Qty', 'Modal', 'Jual', 'Untung', 'Status', 'Pelanggan'];
-      let html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"></head><body><table border="1"><thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>`;
+      let tableHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"></head><body><table border="1"><thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>`;
       dataExport.forEach(t => {
-        html += `<tr><td>${t.id}</td><td>${t.timestamp}</td><td>${t.kategori}</td><td>${t.detail}</td><td>${t.qty}</td><td>${t.modal}</td><td>${t.jual}</td><td>${t.untung}</td><td>${t.status}</td><td>${t.pelanggan}</td></tr>`;
+        tableHtml += `<tr><td>${t.id || ''}</td><td>${t.timestamp || ''}</td><td>${t.kategori || ''}</td><td>${t.detail || ''}</td><td>${t.qty || 0}</td><td>${t.modal || 0}</td><td>${t.jual || 0}</td><td>${t.untung || 0}</td><td>${t.status || ''}</td><td>${t.pelanggan || ''}</td></tr>`;
       });
-      html += `</tbody></table></body></html>`;
-      const blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `Riwayat_Transaksi_Sheet_${new Date().toISOString().slice(0, 10)}.xls`;
-      link.click();
+      tableHtml += `</tbody></table></body></html>`;
+      const blob = new Blob([tableHtml], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Riwayat-Transaksi-${new Date().toISOString().slice(0, 10)}.xls`;
+      a.click();
     }
 
-    // ================= 2. KASIR PENJUALAN =================
+    // ================= KASIR PENJUALAN =================
     function renderKasirDropdowns() { filterProdukKasirList(); renderCart(); }
 
     function filterProdukKasirList() {
@@ -1210,9 +1303,14 @@
       
       filtered.forEach(p => {
         const isOut = p.kategori === 'Fisik' && p.stok <= 0;
+        const imgTag = p.gambar 
+          ? `<img src="${p.gambar}" class="w-full h-24 object-cover rounded-xl mb-1.5 border border-slate-200">` 
+          : `<div class="w-full h-24 bg-slate-100 rounded-xl mb-1.5 flex items-center justify-center text-slate-400 text-lg"><i class="fas fa-box"></i></div>`;
+
         grid.innerHTML += `
-          <div onclick="${isOut ? '' : `addToCart('${p.id}')`}" class="p-3 rounded-2xl bg-white border border-slate-200 shadow-sm ${isOut ? 'opacity-50 cursor-not-allowed' : 'hover:border-orange-500 cursor-pointer'} transition flex flex-col justify-between gap-1">
+          <div onclick="${isOut ? '' : `addToCart('${p.id}')`}" class="p-3 rounded-2xl bg-white border border-slate-200 shadow-sm ${isOut ? 'opacity-50 cursor-not-allowed' : 'hover:border-orange-500/50 hover:shadow-md cursor-pointer'} transition flex flex-col justify-between gap-1">
             <div>
+              ${imgTag}
               <div class="text-[10px] font-bold text-orange-600 uppercase">${p.kategori}</div>
               <div class="text-xs font-bold text-slate-900 line-clamp-2 mt-0.5">${p.nama}</div>
             </div>
@@ -1225,10 +1323,10 @@
       });
     }
 
-    function addToCart(id) {
-      const p = appData.produk.find(item => item.id === id);
+    function addToCart(produkId) {
+      const p = appData.produk.find(item => item.id === produkId);
       if (!p) return;
-      const existing = cart.find(c => c.id === id);
+      const existing = cart.find(c => c.id === produkId);
       if (existing) {
         if (p.kategori === 'Fisik' && existing.qty + 1 > p.stok) { alert('Stok tidak cukup!'); return; }
         existing.qty += 1;
@@ -1239,11 +1337,11 @@
       renderCart();
     }
 
-    function updateCartQty(id, delta) {
-      const item = cart.find(c => c.id === id);
+    function updateCartQty(produkId, delta) {
+      const item = cart.find(c => c.id === produkId);
       if (!item) return;
       item.qty += delta;
-      if (item.qty <= 0) cart = cart.filter(c => c.id !== id);
+      if (item.qty <= 0) cart = cart.filter(c => c.id !== produkId);
       renderCart();
     }
 
@@ -1253,7 +1351,7 @@
       const container = document.getElementById('cart-items-container');
       if (!container) return;
       if (cart.length === 0) {
-        container.innerHTML = `<div class="text-center py-8 text-slate-400 text-xs">Keranjang masih kosong</div>`;
+        container.innerHTML = `<div class="text-center py-8 text-slate-400 text-xs">Kosong</div>`;
         document.getElementById('cart-grand-total').innerText = 'Rp 0';
         return;
       }
@@ -1290,7 +1388,9 @@
       const grandTotal = cart.reduce((acc, item) => acc + (item.jual * item.qty), 0);
       const uangBayar = parseRupiah(document.getElementById('cart-uang-bayar').value);
 
-      if (statusBayar === 'Lunas' && uangBayar < grandTotal) { alert('Uang diterima kurang!'); return; }
+      if (statusBayar === 'Lunas' && uangBayar < grandTotal) {
+        alert('Uang diterima kurang dari total pembayaran!'); return;
+      }
 
       let grandModal = 0, grandQty = 0, detailNames = [];
       cart.forEach(item => {
@@ -1304,7 +1404,6 @@
       const now = new Date();
       const newTrxId = 'TRX-' + Date.now().toString().slice(-6);
       const newTrx = {
-        action: 'simpanTransaksi',
         id: newTrxId,
         timestamp: now.toISOString().slice(0, 10) + ' ' + now.toTimeString().slice(0, 5),
         kategori: 'Fisik', detail: detailNames.join(', '), qty: grandQty, modal: grandModal, jual: grandTotal, untung: grandTotal - grandModal, status: statusBayar, pelanggan, bayar: uangBayar, kembalian: Math.max(0, uangBayar - grandTotal)
@@ -1312,13 +1411,10 @@
 
       appData.transaksi.unshift(newTrx);
       if (statusBayar === 'Kasbon') {
-        appData.kasbon.unshift({ action: 'simpanKasbon', id: 'KSB-' + Date.now().toString().slice(-6), tanggal: now.toISOString().slice(0, 10), pelanggan, noHp: '-', hutang: grandTotal, status: 'Belum Lunas' });
+        appData.kasbon.unshift({ id: 'KSB-' + Date.now().toString().slice(-6), tanggal: now.toISOString().slice(0, 10), pelanggan, noHp: '-', hutang: grandTotal, status: 'Belum Lunas' });
       }
 
-      await kirimKeBackend(newTrx);
-      if (statusBayar === 'Kasbon') {
-        await kirimKeBackend(appData.kasbon[0]);
-      }
+      await syncKeGoogleSheets(newTrx);
 
       cart = []; document.getElementById('cart-pelanggan').value = ''; document.getElementById('cart-uang-bayar').value = '';
       renderCart(); calculateDashboardMetrics(); saveData(); renderAllViews();
@@ -1346,17 +1442,34 @@
     }
 
     function renderDigitalRowHTML(index) {
+      const isWifi = currentKasirMode === 'wifi';
+      const deleteBtn = index > 1 ? `<button type="button" onclick="removeDigitalRow(this)" class="text-rose-600 hover:text-rose-700 p-1 transition" title="Hapus Baris"><i class="fas fa-trash-alt text-xs"></i></button>` : '';
+
+      if (isWifi) {
+        return `
+          <div class="digital-item-row bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3 relative shadow-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-orange-600">WiFi/Voucher #${index}</span>
+              ${deleteBtn}
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div><label class="block text-[10px] font-bold text-slate-500 mb-1">Paket</label><input type="text" class="dig-nama w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 shadow-sm" placeholder="Bulanan/Harian"></div>
+              <div><label class="block text-[10px] font-bold text-slate-500 mb-1">Keterangan</label><input type="text" class="dig-tujuan w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 shadow-sm" placeholder="Nama/Kode"></div>
+              <div><label class="block text-[10px] font-bold text-emerald-600 mb-1">Laba (Rp)</label><input type="hidden" class="dig-modal" value="0"><input type="text" class="dig-jual w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-bold shadow-sm" oninput="formatInputRibuan(this); hitungTotalDigital();" placeholder="100.000"></div>
+            </div>
+          </div>`;
+      }
       return `
         <div class="digital-item-row bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3 relative shadow-sm">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-orange-600">Item #${index}</span>
-            ${index > 1 ? `<button type="button" onclick="removeDigitalRow(this)" class="text-rose-600"><i class="fas fa-trash-alt text-xs"></i></button>` : ''}
+            ${deleteBtn}
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div><label class="block text-[10px] font-bold text-slate-500 mb-1">Layanan / Produk</label><input type="text" class="dig-nama w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900" placeholder="Telkomsel 10rb"></div>
-            <div><label class="block text-[10px] font-bold text-slate-500 mb-1">No Tujuan / Keterangan</label><input type="text" class="dig-tujuan w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900" placeholder="0812..."></div>
-            <div><label class="block text-[10px] font-bold text-slate-500 mb-1">Modal (Rp)</label><input type="text" class="dig-modal w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-bold" oninput="formatInputRibuan(this); hitungTotalDigital();" placeholder="0"></div>
-            <div><label class="block text-[10px] font-bold text-slate-500 mb-1">Jual (Rp)</label><input type="text" class="dig-jual w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-bold" oninput="formatInputRibuan(this); hitungTotalDigital();" placeholder="0"></div>
+            <div><label class="block text-[10px] font-bold text-slate-500 mb-1">Layanan</label><input type="text" class="dig-nama w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 shadow-sm" placeholder="Telkomsel 10rb"></div>
+            <div><label class="block text-[10px] font-bold text-slate-500 mb-1">No Tujuan</label><input type="text" class="dig-tujuan w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 shadow-sm" placeholder="0812..."></div>
+            <div><label class="block text-[10px] font-bold text-slate-500 mb-1">Modal (Rp)</label><input type="text" class="dig-modal w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-bold shadow-sm" oninput="formatInputRibuan(this); hitungTotalDigital();" placeholder="0"></div>
+            <div><label class="block text-[10px] font-bold text-slate-500 mb-1">Jual (Rp)</label><input type="text" class="dig-jual w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-bold shadow-sm" oninput="formatInputRibuan(this); hitungTotalDigital();" placeholder="0"></div>
           </div>
         </div>`;
     }
@@ -1373,14 +1486,26 @@
     }
 
     function removeDigitalRow(button) {
-      button.closest('.digital-item-row').remove();
-      hitungTotalDigital();
+      const row = button.closest('.digital-item-row');
+      if (row) {
+        row.remove();
+        // Perbarui nomor urut judul item yang tersisa
+        const rows = document.querySelectorAll('.digital-item-row');
+        rows.forEach((r, idx) => {
+          const titleSpan = r.querySelector('span.font-bold');
+          if (titleSpan) {
+            const prefix = titleSpan.textContent.includes('WiFi') ? 'WiFi/Voucher #' : 'Item #';
+            titleSpan.innerText = prefix + (idx + 1);
+          }
+        });
+        hitungTotalDigital();
+      }
     }
 
     function hitungTotalDigital() {
       let grandTotal = 0, grandModal = 0;
       document.querySelectorAll('.digital-item-row').forEach(r => {
-        grandModal += parseRupiah(r.querySelector('.dig-modal').value);
+        grandModal += currentKasirMode === 'wifi' ? 0 : parseRupiah(r.querySelector('.dig-modal').value);
         grandTotal += parseRupiah(r.querySelector('.dig-jual').value);
       });
       document.getElementById('dig-grand-total').innerText = formatRupiah(grandTotal);
@@ -1389,10 +1514,12 @@
     }
 
     function hitungKembalianDig() {
+      const rows = document.querySelectorAll('.digital-item-row');
       let grandTotal = 0;
-      document.querySelectorAll('.digital-item-row').forEach(r => grandTotal += parseRupiah(r.querySelector('.dig-jual').value));
+      rows.forEach(r => grandTotal += parseRupiah(r.querySelector('.dig-jual').value));
       const uangBayar = parseRupiah(document.getElementById('dig-uang-bayar').value);
-      document.getElementById('dig-kembalian-text').innerText = formatRupiah(Math.max(0, uangBayar - grandTotal));
+      const kembalian = uangBayar - grandTotal;
+      document.getElementById('dig-kembalian-text').innerText = formatRupiah(kembalian >= 0 ? kembalian : 0);
     }
 
     async function prosesCheckoutDigital() {
@@ -1403,40 +1530,59 @@
       const kategoriMap = { 'pulsa': 'Pulsa & Data', 'ppob': 'PPOB', 'atm': 'Mini ATM', 'game': 'Game', 'wifi': 'WiFi' };
       const kategoriTrx = kategoriMap[currentKasirMode] || 'Digital';
 
-      let grandJual = 0, grandModal = 0, details = [];
-      rows.forEach(r => {
-        const modal = parseRupiah(r.querySelector('.dig-modal').value);
-        const jual = parseRupiah(r.querySelector('.dig-jual').value);
-        grandModal += modal; grandJual += jual;
-        details.push(`${r.querySelector('.dig-nama').value} (${r.querySelector('.dig-tujuan').value || '-'})`);
-      });
+      let totalJualAll = 0;
+      rows.forEach(r => totalJualAll += parseRupiah(r.querySelector('.dig-jual').value));
 
-      if (statusBayar === 'Lunas' && uangBayar < grandJual) { alert('Uang diterima kurang!'); return; }
+      if (statusBayar === 'Lunas' && uangBayar < totalJualAll) {
+        alert('Uang diterima kurang dari total pembayaran!'); return;
+      }
+
+      let items = [];
+      rows.forEach(r => {
+        const modal = currentKasirMode === 'wifi' ? 0 : parseRupiah(r.querySelector('.dig-modal').value);
+        const jual = parseRupiah(r.querySelector('.dig-jual').value);
+        items.push({
+          kategori: kategoriTrx,
+          detail: `${r.querySelector('.dig-nama').value} (${r.querySelector('.dig-tujuan').value || '-'})`,
+          modal: modal, jual: jual, untung: jual - modal, qty: 1, pelanggan, statusBayar
+        });
+      });
 
       const now = new Date();
       const newTrxId = 'TRX-' + Date.now().toString().slice(-6);
+      let detailGabung = items.map(i => i.detail).join(', ');
+      let grandJual = items.reduce((a, b) => a + b.jual, 0);
+      let grandModal = items.reduce((a, b) => a + b.modal, 0);
+
       const masterTrx = {
-        action: 'simpanTransaksi',
         id: newTrxId,
         timestamp: now.toISOString().slice(0, 10) + ' ' + now.toTimeString().slice(0, 5),
-        kategori: kategoriTrx, detail: details.join(', '), qty: rows.length, modal: grandModal, jual: grandJual, untung: grandJual - grandModal, status: statusBayar, pelanggan, bayar: uangBayar, kembalian: Math.max(0, uangBayar - grandJual)
+        kategori: kategoriTrx, detail: detailGabung, qty: items.length, modal: grandModal, jual: grandJual, untung: grandJual - grandModal, status: statusBayar, pelanggan, bayar: uangBayar, kembalian: Math.max(0, uangBayar - grandJual)
       };
 
       appData.transaksi.unshift(masterTrx);
-      await kirimKeBackend(masterTrx);
+      if (statusBayar === 'Kasbon') {
+        appData.kasbon.unshift({ id: 'KSB-' + Date.now().toString().slice(-6), tanggal: now.toISOString().slice(0, 10), pelanggan, noHp: '-', hutang: grandJual, status: 'Belum Lunas' });
+      }
+
+      await syncKeGoogleSheets(masterTrx);
 
       document.getElementById('dig-pelanggan').value = ''; document.getElementById('dig-uang-bayar').value = '';
       resetDigitalRows(); calculateDashboardMetrics(); saveData(); renderAllViews();
       bukaStrukTransaksi(newTrxId);
     }
 
+    // ================= MODAL STRUK & BAGIKAN JPG =================
     function bukaStrukTransaksi(idTrx) {
       const trx = appData.transaksi.find(t => t.id === idTrx);
       if (!trx) return;
+
       document.getElementById('struk-id').innerText = trx.id;
       document.getElementById('struk-waktu').innerText = trx.timestamp;
       document.getElementById('struk-pelanggan').innerText = trx.pelanggan;
-      document.getElementById('struk-items-list').innerHTML = `<div class="flex justify-between"><span>${trx.detail}</span><span>${formatRupiah(trx.jual)}</span></div>`;
+      document.getElementById('struk-items-list').innerHTML = `
+        <div class="flex justify-between"><span>${trx.detail}</span><span>${formatRupiah(trx.jual)}</span></div>
+      `;
       document.getElementById('struk-total').innerText = formatRupiah(trx.jual);
       document.getElementById('struk-bayar').innerText = formatRupiah(trx.bayar || trx.jual);
       document.getElementById('struk-kembali').innerText = formatRupiah(trx.kembalian || 0);
@@ -1446,15 +1592,16 @@
     function tutupModalStruk() { document.getElementById('modal-struk').classList.add('hidden'); }
 
     async function bagikanStrukJPG() {
-      const el = document.getElementById('print-area');
-      const canvas = await html2canvas(el, { scale: 2 });
+      const element = document.getElementById('print-area');
+      element.style.display = 'block';
+      const canvas = await html2canvas(element, { scale: 2 });
       const link = document.createElement('a');
       link.download = `Struk-${Date.now()}.jpg`;
       link.href = canvas.toDataURL('image/jpeg');
       link.click();
     }
 
-    // ================= 3. STOK & JASA (Produk_Layanan) =================
+    // ================= PRODUK & STOK (EDIT DENGAN KAMERA HP) =================
     function renderTabelProduk() {
       const tbody = document.getElementById('tabel-produk-body');
       tbody.innerHTML = '';
@@ -1462,32 +1609,37 @@
       const filtered = appData.produk.filter(p => p.nama.toLowerCase().includes(keyword));
 
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Tidak ada produk / layanan di sheet Produk_Layanan</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Tidak ada produk</td></tr>`;
         return;
       }
 
       filtered.forEach(p => {
+        const thumbHtml = p.gambar 
+          ? `<img src="${p.gambar}" class="w-10 h-10 rounded-xl object-cover border border-slate-200 shrink-0">` 
+          : `<div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 shrink-0"><i class="fas fa-box"></i></div>`;
+
         tbody.innerHTML += `
           <tr class="hover:bg-slate-50 transition">
-            <td class="py-3 px-4 font-mono text-[10px] text-slate-500">${p.id}</td>
-            <td class="py-3 px-4"><span class="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-slate-100 text-orange-600">${p.kategori}</span></td>
+            <td class="py-3 px-4 flex items-center gap-2.5">${thumbHtml}<span class="text-[10px] font-mono text-slate-500">${p.id}</span></td>
+            <td class="py-3 px-4"><span class="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-slate-100 text-orange-600 border border-slate-200">${p.kategori}</span></td>
             <td class="py-3 px-4 font-bold text-slate-900">${p.nama}</td>
             <td class="py-3 px-4 text-right text-slate-600">${formatRupiah(p.modal)}</td>
             <td class="py-3 px-4 text-right font-bold text-orange-600">${formatRupiah(p.jual)}</td>
             <td class="py-3 px-4 text-center">${p.kategori === 'Fisik' ? p.stok : 'Unlimited'}</td>
             <td class="py-3 px-4 text-center flex items-center justify-center gap-2">
-              <button onclick="editProduk('${p.id}')" class="p-2 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl shadow-sm" title="Edit Produk"><i class="fas fa-edit"></i></button>
-              <button onclick="hapusProduk('${p.id}')" class="p-2 bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-600 rounded-xl shadow-sm" title="Hapus Produk"><i class="fas fa-trash"></i></button>
+              <button onclick="editProduk('${p.id}')" class="p-2 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl shadow-sm" title="Edit Stok & Foto"><i class="fas fa-edit"></i></button>
+              <button onclick="hapusProduk('${p.id}')" class="p-2 bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-600 rounded-xl shadow-sm" title="Hapus"><i class="fas fa-trash"></i></button>
             </td>
           </tr>`;
       });
     }
 
     function openModalProduk() {
-      document.getElementById('modal-produk-title').innerText = 'Tambah Barang / Jasa Baru (Produk_Layanan)';
+      document.getElementById('modal-produk-title').innerText = 'Tambah Barang / Jasa Baru';
       document.getElementById('prod-id').value = '';
       document.getElementById('prod-nama').value = '';
       document.getElementById('prod-gambar').value = '';
+      document.getElementById('prod-foto-preview-box').classList.add('hidden');
       document.getElementById('prod-modal').value = '';
       document.getElementById('prod-jual').value = '';
       document.getElementById('prod-stok').value = 10;
@@ -1499,11 +1651,17 @@
     function editProduk(id) {
       const p = appData.produk.find(item => item.id === id);
       if (!p) return;
-      document.getElementById('modal-produk-title').innerText = 'Edit Produk / Layanan';
+      document.getElementById('modal-produk-title').innerText = 'Edit Stok & Foto Barang';
       document.getElementById('prod-id').value = p.id;
       document.getElementById('prod-kategori').value = p.kategori;
       document.getElementById('prod-nama').value = p.nama;
       document.getElementById('prod-gambar').value = p.gambar || '';
+      if (p.gambar) {
+        document.getElementById('prod-foto-preview-img').src = p.gambar;
+        document.getElementById('prod-foto-preview-box').classList.remove('hidden');
+      } else {
+        document.getElementById('prod-foto-preview-box').classList.add('hidden');
+      }
       document.getElementById('prod-modal').value = p.modal ? p.modal.toLocaleString('id-ID') : '';
       document.getElementById('prod-jual').value = p.jual ? p.jual.toLocaleString('id-ID') : '';
       document.getElementById('prod-stok').value = p.stok;
@@ -1511,18 +1669,38 @@
     }
 
     function openCameraForProduct() { document.getElementById('prod-camera-input').click(); }
+
     function handleCameraCapture(event) {
       const file = event.target.files[0];
       if (!file) return;
-      compressCameraImage(file, 500, (base64) => { document.getElementById('prod-gambar').value = base64; });
+      compressCameraImage(file, 500, (base64Img) => {
+        document.getElementById('prod-gambar').value = base64Img;
+        document.getElementById('prod-foto-preview-img').src = base64Img;
+        document.getElementById('prod-foto-preview-box').classList.remove('hidden');
+      });
     }
-    function hapusFotoProduk() { document.getElementById('prod-gambar').value = ''; }
+
+    function hapusFotoProduk() {
+      document.getElementById('prod-gambar').value = '';
+      document.getElementById('prod-camera-input').value = '';
+      document.getElementById('prod-foto-preview-box').classList.add('hidden');
+    }
 
     async function hapusProduk(id) {
-      if (!confirm('Hapus produk ini dari sheet Produk_Layanan?')) return;
+      if (!confirm('Hapus produk ini?')) return;
       appData.produk = appData.produk.filter(p => p.id !== id);
       calculateDashboardMetrics(); saveData(); renderAllViews();
-      await kirimKeBackend({ action: 'hapusProduk', id: id });
+
+      if (GAS_API_URL) {
+        try {
+          await fetch(GAS_API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'hapusProduk', id: id })
+          });
+        } catch (err) { console.error('Gagal hapus produk di Sheets:', err); }
+      }
     }
 
     async function simpanDataProduk() {
@@ -1536,33 +1714,49 @@
 
       if (!nama || !jual) { alert('Nama dan harga jual wajib diisi!'); return; }
 
-      const produkObj = {
-        action: 'simpanProduk',
-        id: id || ('PRD-' + Math.floor(1000 + Math.random() * 9000)),
-        kategori, nama, modal, jual, stok, gambar
-      };
-
-      const existingIndex = appData.produk.findIndex(p => p.id === produkObj.id);
-      if (existingIndex >= 0) {
-        appData.produk[existingIndex] = produkObj;
+      let produkObj = {};
+      if (id) {
+        const existing = appData.produk.find(p => p.id === id);
+        if (existing) {
+          Object.assign(existing, { kategori, nama, gambar, modal, jual, stok });
+          produkObj = existing;
+        } else {
+          produkObj = { id, kategori, nama, gambar, modal, jual, stok };
+          appData.produk.push(produkObj);
+        }
       } else {
+        produkObj = { id: 'PRD-' + Math.floor(1000 + Math.random() * 9000), kategori, nama, gambar, modal, jual, stok };
         appData.produk.push(produkObj);
       }
 
       closeModalProduk(); calculateDashboardMetrics(); saveData(); renderAllViews();
-      await kirimKeBackend(produkObj);
-      alert('Produk berhasil disimpan dan disinkronkan ke sheet Produk_Layanan!');
+
+      if (GAS_API_URL) {
+        try {
+          await fetch(GAS_API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'simpanProduk', ...produkObj })
+          });
+        } catch (err) { console.error('Gagal sinkronisasi produk ke Sheets:', err); }
+      }
     }
 
-    // ================= 4. SERVIS PC (Servis_PC) =================
+    // ================= SERVIS PC =================
     function renderTabelServis() {
       const tbody = document.getElementById('tabel-servis-body');
       tbody.innerHTML = '';
       if (appData.servis.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Tidak ada data servis di sheet Servis_PC</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Tidak ada servis</td></tr>`;
         return;
       }
       appData.servis.forEach(s => {
+        let aksiExtra = '';
+        if (s.status === 'Diambil' || s.status === 'Selesai') {
+          aksiExtra = `<button onclick="bukaStrukServis('${s.id}')" class="p-2 bg-emerald-100 text-emerald-700 rounded-xl border border-emerald-300" title="Cetak/Bagikan Struk Servis"><i class="fas fa-print"></i></button>`;
+        }
+
         tbody.innerHTML += `
           <tr class="hover:bg-slate-50 transition">
             <td class="py-3 px-4"><div class="font-bold text-slate-900">${s.id}</div><div class="text-[10px] text-slate-400">${s.tanggal}</div></td>
@@ -1571,26 +1765,24 @@
             <td class="py-3 px-4 text-slate-600">${s.keluhan}</td>
             <td class="py-3 px-4 text-right font-bold text-slate-900">${formatRupiah(s.biaya)}</td>
             <td class="py-3 px-4 text-center">
-              <select onchange="updateStatusServis('${s.id}', this.value)" class="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-900 font-bold shadow-sm">
+              <select onchange="updateStatusServis('${s.id}', this.value)" class="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-900 shadow-sm">
                 <option value="Antre" ${s.status === 'Antre' ? 'selected' : ''}>Antre</option>
                 <option value="Proses" ${s.status === 'Proses' ? 'selected' : ''}>Proses</option>
                 <option value="Selesai" ${s.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
-                <option value="Diambil" ${s.status === 'Diambil' ? 'selected' : ''}>Diambil (Lunas & Masuk Trx)</option>
+                <option value="Diambil" ${s.status === 'Diambil' ? 'selected' : ''}>Diambil (Lunas)</option>
               </select>
             </td>
-            <td class="py-3 px-4 text-center">
-              <div class="inline-flex items-center justify-center gap-1">
-                <button onclick="bukaStrukServis('${s.id}')" class="p-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-xl shadow-sm" title="Cetak/Bagikan Struk Servis"><i class="fas fa-print"></i></button>
-                <button onclick="editServis('${s.id}')" class="p-2 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl shadow-sm" title="Edit Servis"><i class="fas fa-edit"></i></button>
-                <button onclick="hapusServis('${s.id}')" class="p-2 bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-600 rounded-xl shadow-sm" title="Hapus Servis"><i class="fas fa-trash"></i></button>
-              </div>
+            <td class="py-3 px-4 text-center flex items-center justify-center gap-1.5">
+              ${aksiExtra}
+              <button onclick="editServis('${s.id}')" class="p-2 bg-white border border-slate-200 text-slate-700 rounded-xl shadow-sm" title="Edit Servis"><i class="fas fa-edit"></i></button>
+              <button onclick="hapusServis('${s.id}')" class="p-2 bg-rose-50 border border-rose-200 text-rose-600 rounded-xl shadow-sm" title="Hapus Servis"><i class="fas fa-trash"></i></button>
             </td>
           </tr>`;
       });
     }
 
     function openModalServis() {
-      document.getElementById('modal-servis-title').innerText = 'Input Servis Laptop / PC Masuk (Servis_PC)';
+      document.getElementById('modal-servis-title').innerText = 'Input Servis Laptop / PC Masuk';
       document.getElementById('srv-edit-id').value = '';
       document.getElementById('srv-pelanggan').value = '';
       document.getElementById('srv-nohp').value = '';
@@ -1616,10 +1808,20 @@
     }
 
     async function hapusServis(id) {
-      if (!confirm('Hapus data servis ini dari sheet Servis_PC?')) return;
+      if (!confirm('Hapus data servis ini?')) return;
       appData.servis = appData.servis.filter(s => s.id !== id);
       saveData(); renderAllViews();
-      await kirimKeBackend({ action: 'hapusServis', id: id });
+
+      if (GAS_API_URL) {
+        try {
+          await fetch(GAS_API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'hapusServis', id: id })
+          });
+        } catch (err) { console.error('Gagal hapus servis di Sheets:', err); }
+      }
     }
 
     async function simpanDataServis() {
@@ -1630,65 +1832,87 @@
       const keluhan = document.getElementById('srv-keluhan').value.trim();
       const biaya = parseRupiah(document.getElementById('srv-biaya').value);
 
-      if (!pelanggan || !perangkat || !biaya) { alert('Lengkapi data servis dengan benar!'); return; }
+      if (!pelanggan || !perangkat || !biaya) { alert('Lengkapi data servis!'); return; }
 
-      const servisObj = {
-        action: 'simpanServis',
-        id: editId || ('SRV-' + Date.now().toString().slice(-6)),
-        tanggal: new Date().toISOString().slice(0, 10),
-        pelanggan, noHp, perangkat, keluhan, biaya, status: 'Antre'
-      };
-
-      const idx = appData.servis.findIndex(s => s.id === servisObj.id);
-      if (idx >= 0) {
-        servisObj.status = appData.servis[idx].status;
-        appData.servis[idx] = servisObj;
+      let servisObj = {};
+      if (editId) {
+        const s = appData.servis.find(item => item.id === editId);
+        if (s) {
+          Object.assign(s, { pelanggan, noHp, perangkat, keluhan, biaya });
+          servisObj = s;
+        }
       } else {
+        servisObj = {
+          id: 'SRV-' + Date.now().toString().slice(-6),
+          tanggal: new Date().toISOString().slice(0, 10),
+          pelanggan, noHp, perangkat, keluhan, biaya, status: 'Antre'
+        };
         appData.servis.unshift(servisObj);
       }
-
       closeModalServis(); calculateDashboardMetrics(); saveData(); renderAllViews();
-      await kirimKeBackend(servisObj);
-      alert('Data servis berhasil disimpan ke sheet Servis_PC!');
+
+      if (GAS_API_URL) {
+        try {
+          await fetch(GAS_API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'simpanServis', ...servisObj })
+          });
+        } catch (err) { console.error('Gagal sinkronisasi servis ke Sheets:', err); }
+      }
     }
 
     async function updateStatusServis(idServis, status) {
       const s = appData.servis.find(item => item.id === idServis);
       if (!s) return;
+      const statusLama = s.status;
       s.status = status;
-      if (status === 'Diambil') {
+      if (status === 'Diambil' && statusLama !== 'Diambil') {
         const newTrx = {
-          action: 'simpanTransaksi',
           id: 'TRX-' + Date.now().toString().slice(-6),
           timestamp: new Date().toISOString().slice(0, 10) + ' ' + new Date().toTimeString().slice(0, 5),
           kategori: 'Servis PC/Laptop', detail: `Servis ${s.perangkat} (${s.keluhan})`, qty: 1, modal: 0, jual: s.biaya, untung: s.biaya, status: 'Lunas', pelanggan: s.pelanggan, bayar: s.biaya, kembalian: 0
         };
         appData.transaksi.unshift(newTrx);
-        await kirimKeBackend(newTrx);
+        await syncKeGoogleSheets(newTrx);
       }
       calculateDashboardMetrics(); saveData(); renderAllViews();
-      await kirimKeBackend({ action: 'updateStatusServis', id: s.id, status: s.status });
+
+      if (GAS_API_URL) {
+        try {
+          await fetch(GAS_API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'updateStatusServis', id: s.id, status: s.status })
+          });
+        } catch (err) { console.error('Gagal update status servis di Sheets:', err); }
+      }
     }
 
     function bukaStrukServis(idServis) {
       const s = appData.servis.find(item => item.id === idServis);
       if (!s) return;
+
       document.getElementById('struk-id').innerText = s.id;
       document.getElementById('struk-waktu').innerText = s.tanggal;
       document.getElementById('struk-pelanggan').innerText = s.pelanggan;
-      document.getElementById('struk-items-list').innerHTML = `<div class="flex justify-between"><span>Servis ${s.perangkat} (${s.keluhan})</span><span>${formatRupiah(s.biaya)}</span></div>`;
+      document.getElementById('struk-items-list').innerHTML = `
+        <div class="flex justify-between"><span>Servis ${s.perangkat} (${s.keluhan})</span><span>${formatRupiah(s.biaya)}</span></div>
+      `;
       document.getElementById('struk-total').innerText = formatRupiah(s.biaya);
       document.getElementById('struk-bayar').innerText = formatRupiah(s.biaya);
       document.getElementById('struk-kembali').innerText = formatRupiah(0);
       document.getElementById('modal-struk').classList.remove('hidden');
     }
 
-    // ================= 5. BUKU KASBON (Kasbon) =================
+    // ================= KASBON & OPERASIONAL =================
     function renderTabelKasbon() {
       const tbody = document.getElementById('tabel-kasbon-body');
       tbody.innerHTML = '';
       if (appData.kasbon.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Tidak ada catatan kasbon di sheet Kasbon</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Tidak ada kasbon</td></tr>`;
         return;
       }
       appData.kasbon.forEach(k => {
@@ -1709,12 +1933,23 @@
       const k = appData.kasbon.find(item => item.id === idKasbon);
       if (k) { 
         k.status = 'Lunas'; 
-        calculateDashboardMetrics(); saveData(); renderAllViews(); 
-        await kirimKeBackend({ action: 'lunasiKasbon', id: k.id });
+        calculateDashboardMetrics(); 
+        saveData(); 
+        renderAllViews(); 
+
+        if (GAS_API_URL) {
+          try {
+            await fetch(GAS_API_URL, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'lunasiKasbon', id: k.id })
+            });
+          } catch (err) { console.error('Gagal lunasi kasbon di Sheets:', err); }
+        }
       }
     }
 
-    // ================= 6. OPERASIONAL & LABA (Operasional_Alokasi) =================
     function getBiayaOperasionalInput() {
       return {
         listrik: parseRupiah(document.getElementById('biaya-listrik')?.value),
@@ -1736,15 +1971,14 @@
 
     async function simpanAlokasi() {
       const saldoTersedia = appData.dashboard?.saldoLabaTersedia || 0;
-      if (saldoTersedia <= 0) { alert('Tidak ada saldo laba tersedia!'); return; }
+      if (saldoTersedia <= 0) { alert('Tidak ada saldo tersedia!'); return; }
       const opsBiaya = getBiayaOperasionalInput();
       const labaBersihBagi = Math.max(0, saldoTersedia - opsBiaya.totalBiaya);
 
       const payload = {
-        action: 'simpanAlokasi',
         id: 'OPS-' + Date.now().toString().slice(-6),
         tanggal: new Date().toISOString().slice(0, 10),
-        catatan: document.getElementById('ops-catatan').value.trim() || 'Alokasi Laba Toko',
+        catatan: document.getElementById('ops-catatan').value.trim() || 'Alokasi Laba',
         biayaOps: opsBiaya.totalBiaya,
         rincianOps: `Listrik/Air: ${formatRupiah(opsBiaya.listrik)}, WiFi: ${formatRupiah(opsBiaya.wifi)}, Pulsa: ${formatRupiah(opsBiaya.pulsa)}, Lainnya: ${formatRupiah(opsBiaya.lainnya)}`,
         gaji: (labaBersihBagi * Number(document.getElementById('pct-gaji').value)) / 100,
@@ -1754,20 +1988,29 @@
       };
 
       appData.operasional.unshift(payload);
+      alert('Alokasi tersimpan!');
       calculateDashboardMetrics(); saveData(); renderAllViews();
-      await kirimKeBackend(payload);
-      alert('Alokasi operasional & laba berhasil disimpan ke sheet Operasional_Alokasi!');
+
+      if (GAS_API_URL) {
+        try {
+          await fetch(GAS_API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'simpanAlokasi', ...payload })
+          });
+        } catch (err) { console.error('Gagal sinkronisasi alokasi ke Sheets:', err); }
+      }
     }
 
     function renderTabelOperasional() {
-      const filterBulan = document.getElementById('filter-bulan-ops')?.value;
+      const filterBulan = document.getElementById('filter-bulan-ops').value;
       const tbody = document.getElementById('tabel-operasional-body');
-      if (!tbody) return;
       tbody.innerHTML = '';
       const filtered = appData.operasional.filter(o => !filterBulan || o.tanggal.startsWith(filterBulan));
 
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Tidak ada riwayat alokasi di sheet Operasional_Alokasi</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Tidak ada riwayat</td></tr>`;
         return;
       }
 
