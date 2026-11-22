@@ -809,6 +809,7 @@
     let html5QrCode = null;
     let currentScanTarget = 'kasir';
     let currentPageTrx = 1; // Halaman aktif pagination riwayat transaksi
+    let lastMutationTime = 0;
 
     window.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('#current-date-str').forEach(el => el.innerText = new Date().toLocaleDateString('id-ID', { dateStyle: 'full' }));
@@ -925,7 +926,7 @@
     }
 
     async function backgroundSyncData() {
-      if (!GAS_API_URL) return;
+      if (!GAS_API_URL || (Date.now() - lastMutationTime < 8000)) return;
       try {
         const response = await fetch(GAS_API_URL);
         const result = await response.json();
@@ -1143,6 +1144,7 @@
 
     async function syncKeGoogleSheets(payload) {
       if (!GAS_API_URL) return;
+      lastMutationTime = Date.now();
       try {
         await fetch(GAS_API_URL, {
           method: 'POST',
