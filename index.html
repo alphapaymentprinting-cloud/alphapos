@@ -227,30 +227,42 @@
           </div>
         </div>
 
-        <!-- Riwayat Transaksi dengan Search Bar, Export, Import Excel, dan Hapus Massal -->
+        <!-- Riwayat Transaksi dengan Search Bar, Pilihan Tampil Per Baris, Export, Import Excel, dan Hapus Massal -->
         <div class="glass-card p-6 rounded-3xl space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h3 class="text-base font-bold text-white">Riwayat Transaksi</h3>
-              <p class="text-xs text-slate-400">Pencarian, filter, dan kelola riwayat penjualan.</p>
+              <p class="text-xs text-slate-400">Pencarian berdasarkan ID, pelanggan, atau detail, serta filter tampilan baris.</p>
             </div>
+            
             <div class="flex flex-wrap items-center gap-1.5 overflow-x-auto py-1">
               <!-- Search Bar -->
               <div class="relative flex items-center">
                 <i class="fas fa-search absolute left-3 text-slate-500 text-[10px]"></i>
-                <input type="text" id="cari-riwayat-trx" oninput="renderDashboardRiwayat()" placeholder="Cari transaksi..." class="bg-slate-900 border border-slate-800 rounded-lg pl-8 pr-3 py-1 text-[11px] text-white focus:outline-none focus:border-orange-500 w-36 sm:w-44">
+                <input type="text" id="cari-riwayat-trx" oninput="currentPageTrx = 1; renderDashboardRiwayat();" placeholder="Cari ID / Pelanggan..." class="bg-slate-900 border border-slate-800 rounded-lg pl-8 pr-3 py-1 text-[11px] text-white focus:outline-none focus:border-orange-500 w-36 sm:w-44">
+              </div>
+
+              <!-- Pilihan Tampil Per Baris (Default 10) -->
+              <div class="flex items-center gap-1 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 shrink-0">
+                <span class="text-[10px] text-slate-400">Tampil:</span>
+                <select id="per-page-trx" onchange="currentPageTrx = 1; renderDashboardRiwayat();" class="bg-transparent text-[11px] text-white focus:outline-none font-bold">
+                  <option value="10" selected>10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
               </div>
 
               <!-- Filter Bulan -->
               <div class="flex items-center gap-1 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 shrink-0">
                 <span class="text-[10px] text-slate-400">Bulan:</span>
-                <input type="month" id="filter-bulan" onchange="calculateDashboardMetrics(); renderDashboardRiwayat();" class="bg-transparent text-[11px] text-white focus:outline-none">
+                <input type="month" id="filter-bulan" onchange="currentPageTrx = 1; calculateDashboardMetrics(); renderDashboardRiwayat();" class="bg-transparent text-[11px] text-white focus:outline-none">
               </div>
               <button onclick="resetFilterBulan()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-[11px] transition shrink-0">Semua</button>
               
               <div class="h-4 w-[1px] bg-slate-800 mx-0.5 shrink-0"></div>
 
-              <!-- Tombol Aksi Cepat (Ikon Simbol) -->
+              <!-- Tombol Aksi Cepat -->
               <button onclick="exportDataExcel()" class="w-8 h-8 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 flex items-center justify-center transition shrink-0" title="Export Excel">
                 <i class="fas fa-file-excel text-xs"></i>
               </button>
@@ -284,6 +296,12 @@
               </thead>
               <tbody id="tabel-riwayat-dashboard" class="divide-y divide-slate-800/60 text-xs text-slate-300"></tbody>
             </table>
+          </div>
+
+          <!-- Pagination Controls -->
+          <div id="pagination-trx-container" class="flex flex-col sm:flex-row items-center justify-between pt-3 border-t border-slate-800 text-xs text-slate-400 gap-2">
+            <div id="pagination-info">Menampilkan 0 dari 0 data</div>
+            <div id="pagination-buttons" class="flex items-center gap-1"></div>
           </div>
         </div>
       </section>
@@ -787,6 +805,7 @@
     let currentKasirMode = 'fisik';
     let html5QrCode = null;
     let currentScanTarget = 'kasir';
+    let currentPageTrx = 1; // Halaman aktif pagination riwayat transaksi
 
     window.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('#current-date-str').forEach(el => el.innerText = new Date().toLocaleDateString('id-ID', { dateStyle: 'full' }));
@@ -902,7 +921,6 @@
       }, 300);
     }
 
-    // Background sync real-time tanpa mengganggu interaksi form aktif
     async function backgroundSyncData() {
       if (!GAS_API_URL) return;
       try {
@@ -920,10 +938,9 @@
 
     function saveData() { localStorage.setItem('alpha_pos_data', JSON.stringify(appData)); }
 
-    // Perhitungan Omzet & Keuntungan Per Bulan (Berdasarkan filter atau bulan saat ini)
     function calculateDashboardMetrics() {
       const filterBulanInput = document.getElementById('filter-bulan')?.value;
-      const currentMonthStr = filterBulanInput || new Date().toISOString().slice(0, 7); // Format YYYY-MM
+      const currentMonthStr = filterBulanInput || new Date().toISOString().slice(0, 7);
 
       let omzetBulanIni = 0, untungBulanIni = 0, jumlahTrxBulanIni = 0, totalLabaKeseluruhan = 0;
 
@@ -999,29 +1016,44 @@
       }
     }
 
-    // ================= RIWAYAT TRANSAKSI DENGAN PENCARIAN =================
+    // ================= RIWAYAT TRANSAKSI: PENCARIAN & PAGINATION =================
     function renderDashboardRiwayat() {
       const filterBulan = document.getElementById('filter-bulan').value;
-      const searchKeyword = (document.getElementById('cari-riwayat-trx')?.value || '').toLowerCase();
+      const searchKeyword = (document.getElementById('cari-riwayat-trx')?.value || '').toLowerCase().trim();
+      const perPageSelect = document.getElementById('per-page-trx');
+      const perPage = perPageSelect ? Number(perPageSelect.value) : 10;
+
       const tbody = document.getElementById('tabel-riwayat-dashboard');
+      if (!tbody) return;
       tbody.innerHTML = '';
 
+      // Filter berdasarkan bulan dan keyword pencarian (ID, Pelanggan, Detail, Kategori)
       const filtered = appData.transaksi.filter(t => {
         const matchBulan = !filterBulan || (t.timestamp && t.timestamp.startsWith(filterBulan));
         const matchSearch = !searchKeyword || 
-          (t.id && t.id.toLowerCase().includes(searchKeyword)) ||
-          (t.detail && t.detail.toLowerCase().includes(searchKeyword)) ||
-          (t.pelanggan && t.pelanggan.toLowerCase().includes(searchKeyword)) ||
-          (t.kategori && t.kategori.toLowerCase().includes(searchKeyword));
+          (t.id && String(t.id).toLowerCase().includes(searchKeyword)) ||
+          (t.detail && String(t.detail).toLowerCase().includes(searchKeyword)) ||
+          (t.pelanggan && String(t.pelanggan).toLowerCase().includes(searchKeyword)) ||
+          (t.kategori && String(t.kategori).toLowerCase().includes(searchKeyword));
         return matchBulan && matchSearch;
       });
 
-      if (filtered.length === 0) {
+      const totalData = filtered.length;
+      const totalPages = Math.ceil(totalData / perPage) || 1;
+      if (currentPageTrx > totalPages) currentPageTrx = totalPages;
+      if (currentPageTrx < 1) currentPageTrx = 1;
+
+      const startIndex = (currentPageTrx - 1) * perPage;
+      const paginatedData = filtered.slice(startIndex, startIndex + perPage);
+
+      if (paginatedData.length === 0) {
         tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-500">Tidak ada riwayat transaksi ditemukan</td></tr>`;
+        document.getElementById('pagination-info').innerText = `Menampilkan 0 dari 0 data`;
+        document.getElementById('pagination-buttons').innerHTML = '';
         return;
       }
 
-      filtered.forEach(t => {
+      paginatedData.forEach(t => {
         const fotoIcon = t.foto ? `<span class="ml-1 text-emerald-400" title="Ada Lampiran Foto"><i class="fas fa-image"></i></span>` : '';
         tbody.innerHTML += `
           <tr class="hover:bg-slate-900/60 transition">
@@ -1047,6 +1079,50 @@
           </tr>
         `;
       });
+
+      // Update Info Pagination
+      const endItem = Math.min(startIndex + perPage, totalData);
+      document.getElementById('pagination-info').innerText = `Menampilkan ${totalData > 0 ? startIndex + 1 : 0} - ${endItem} dari ${totalData} data`;
+
+      // Render Tombol Navigasi Pagination
+      const btnContainer = document.getElementById('pagination-buttons');
+      btnContainer.innerHTML = '';
+      
+      if (totalPages > 1) {
+        btnContainer.innerHTML += `<button onclick="changePageTrx(${currentPageTrx - 1})" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-[11px] ${currentPageTrx === 1 ? 'opacity-40 cursor-not-allowed' : ''}"><i class="fas fa-chevron-left"></i></button>`;
+        
+        for (let i = 1; i <= totalPages; i++) {
+          if (i === 1 || i === totalPages || (i >= currentPageTrx - 1 && i <= currentPageTrx + 1)) {
+            btnContainer.innerHTML += `<button onclick="changePageTrx(${i})" class="px-2.5 py-1 rounded-lg text-[11px] font-bold ${i === currentPageTrx ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20' : 'bg-slate-800 hover:bg-slate-700 text-slate-300'}">${i}</button>`;
+          } else if (i === currentPageTrx - 2 || i === currentPageTrx + 2) {
+            btnContainer.innerHTML += `<span class="px-1 text-slate-500">...</span>`;
+          }
+        }
+
+        btnContainer.innerHTML += `<button onclick="changePageTrx(${currentPageTrx + 1})" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-[11px] ${currentPageTrx === totalPages ? 'opacity-40 cursor-not-allowed' : ''}"><i class="fas fa-chevron-right"></i></button>`;
+      }
+    }
+
+    function changePageTrx(targetPage) {
+      const perPage = Number(document.getElementById('per-page-trx')?.value || 10);
+      const filterBulan = document.getElementById('filter-bulan').value;
+      const searchKeyword = (document.getElementById('cari-riwayat-trx')?.value || '').toLowerCase().trim();
+
+      const filtered = appData.transaksi.filter(t => {
+        const matchBulan = !filterBulan || (t.timestamp && t.timestamp.startsWith(filterBulan));
+        const matchSearch = !searchKeyword || 
+          (t.id && String(t.id).toLowerCase().includes(searchKeyword)) ||
+          (t.detail && String(t.detail).toLowerCase().includes(searchKeyword)) ||
+          (t.pelanggan && String(t.pelanggan).toLowerCase().includes(searchKeyword)) ||
+          (t.kategori && String(t.kategori).toLowerCase().includes(searchKeyword));
+        return matchBulan && matchSearch;
+      });
+
+      const totalPages = Math.ceil(filtered.length / perPage) || 1;
+      if (targetPage >= 1 && targetPage <= totalPages) {
+        currentPageTrx = targetPage;
+        renderDashboardRiwayat();
+      }
     }
 
     function toggleSelectAllTrx(master) {
@@ -1057,6 +1133,7 @@
       document.getElementById('filter-bulan').value = '';
       const searchBox = document.getElementById('cari-riwayat-trx');
       if (searchBox) searchBox.value = '';
+      currentPageTrx = 1;
       calculateDashboardMetrics();
       renderDashboardRiwayat();
     }
