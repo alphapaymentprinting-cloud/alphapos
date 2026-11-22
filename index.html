@@ -1189,15 +1189,6 @@
         'bagilaba': 'Bagi Laba'
       };
       document.getElementById('header-title-text').innerText = titles[tabId] || 'ALPHA';
-
-      // Refresh otomatis daftar barang fisik saat tab Kasir dibuka
-      if (tabId === 'kasir') {
-        filterProdukKasirList();
-        renderCart();
-      } else if (tabId === 'produk') {
-        renderTabelProduk();
-      }
-
       if (window.innerWidth < 768) toggleSidebar();
     }
 
@@ -1219,14 +1210,11 @@
         document.getElementById('dash-total-ops').innerText = formatRupiah(appData.dashboard.totalOperasionalSemua);
         document.getElementById('dash-saldo-tersedia').innerText = formatRupiah(appData.dashboard.saldoLabaTersedia);
       }
-
       renderDashboardRiwayat();
-      // Selalu perbarui daftar barang fisik di kasir dan tabel stok (baik saat aksi langsung maupun sync otomatis)
-      renderKasirDropdowns();
-      renderTabelProduk();
-
       if (!isBackground) {
+        renderKasirDropdowns();
         renderTabelPercetakan();
+        renderTabelProduk();
         renderTabelServis();
         renderTabelKasbon();
         renderTabelOperasional();
@@ -2039,11 +2027,8 @@
 
     async function hapusProduk(id) {
       if (!confirm('Hapus barang ini?')) return;
-      appData.produk = appData.produk.filter(p => String(p.id) !== String(id));
-      cart = cart.filter(c => String(c.id) !== String(id));
-      calculateDashboardMetrics(); 
-      saveData(); 
-      renderAllViews(false);
+      appData.produk = appData.produk.filter(p => p.id !== id);
+      calculateDashboardMetrics(); saveData(); renderAllViews();
       await syncKeGoogleSheets({ action: 'hapusProduk', id: id });
     }
 
