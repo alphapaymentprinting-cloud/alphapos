@@ -687,6 +687,48 @@
           </div>
         </div>
 
+        <!-- TAMBAHAN BARU: REKAP PIUTANG PER PELANGGAN -->
+        <div class="glass-card p-6 rounded-3xl space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
+            <div>
+              <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <i class="fas fa-users text-rose-500"></i> Rekap Piutang per Pelanggan
+              </h3>
+              <p class="text-[11px] text-slate-500">
+                Total Pelanggan Berhutang: <span id="rekap-kasbon-pelanggan-count" class="font-bold text-rose-600">0 Pelanggan</span> | 
+                Akumulasi Sisa Piutang: <span id="rekap-kasbon-sisa-total" class="font-extrabold text-rose-600">Rp 0</span>
+              </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <div class="relative">
+                <i class="fas fa-search absolute left-3 top-2.5 text-slate-400 text-[10px]"></i>
+                <input type="text" id="cari-rekap-kasbon" oninput="renderRekapKasbonPelanggan()" placeholder="Cari nama pelanggan..." class="bg-white border border-slate-200 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-rose-500 shadow-sm">
+              </div>
+              <label class="flex items-center gap-1.5 text-xs text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-xl cursor-pointer shadow-sm select-none">
+                <input type="checkbox" id="filter-rekap-belum-lunas" checked onchange="renderRekapKasbonPelanggan()" class="rounded text-rose-600 focus:ring-0">
+                <span>Hanya yang masih berhutang</span>
+              </label>
+            </div>
+          </div>
+          <div class="overflow-x-auto max-h-72 custom-scrollbar">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider bg-slate-50/70">
+                  <th class="py-3 px-4">No</th>
+                  <th class="py-3 px-4">Nama Pelanggan</th>
+                  <th class="py-3 px-4 text-center">Jumlah Nota</th>
+                  <th class="py-3 px-4 text-right">Total Kasbon</th>
+                  <th class="py-3 px-4 text-right">Sudah Lunas</th>
+                  <th class="py-3 px-4 text-right">Sisa Hutang</th>
+                  <th class="py-3 px-4 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tabel-rekap-kasbon-body" class="divide-y divide-slate-200 text-xs text-slate-700"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- AKHIR TAMBAHAN REKAP PIUTANG PER PELANGGAN -->
+
         <div class="glass-card p-6 rounded-3xl space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
             <div>
@@ -2402,6 +2444,7 @@
     // ================= KASBON =================
     function setPageKasbon(p) { pageKasbon = p; renderTabelKasbon(); }
     function renderTabelKasbon() {
+      renderRekapKasbonPelanggan();
       const filterBulan = document.getElementById('filter-bulan-kasbon')?.value || '';
       const perPageVal = document.getElementById('per-page-kasbon')?.value || '10';
       const tbody = document.getElementById('tabel-kasbon-body');
@@ -2477,6 +2520,142 @@
         hutang: jual,
         pelanggan: k.pelanggan
       });
+    }
+
+    function renderRekapKasbonPelanggan() {
+      const filterBulan = document.getElementById('filter-bulan-kasbon')?.value || '';
+      const searchNama = (document.getElementById('cari-rekap-kasbon')?.value || '').toLowerCase().trim();
+      const hanyaBelumLunas = document.getElementById('filter-rekap-belum-lunas')?.checked ?? true;
+      const tbody = document.getElementById('tabel-rekap-kasbon-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const filtered = (appData.kasbon || []).filter(k => !filterBulan || (k.tanggal && k.tanggal.startsWith(filterBulan)));
+
+      const rekapMap = {};
+      filtered.forEach(k => {
+        const namaAsli = (k.pelanggan || 'Umum').trim();
+        const key = namaAsli.toLowerCase();
+        if (!rekapMap[key]) {
+          rekapMap[key] = {
+            pelanggan: namaAsli,
+            jumlahNota: 0,
+            notaBelumLunas: 0,
+            totalKasbon: 0,
+            sudahLunas: 0,
+            sisaHutang: 0
+          };
+        }
+        const nominal = Number(k.hutang) || 0;
+        rekapMap[key].jumlahNota += 1;
+        rekapMap[key].totalKasbon += nominal;
+        if (k.status === 'Lunas') {
+          rekapMap[key].sudahLunas += nominal;
+        } else {
+          rekapMap[key].sisaHutang += nominal;
+          rekapMap[key].notaBelumLunas += 1;
+        }
+      });
+
+      let rekapList = Object.values(rekapMap).sort((a, b) => b.sisaHutang - a.sisaHutang);
+
+      const pelangganBerhutang = rekapList.filter(r => r.sisaHutang > 0);
+      const totalSisaSemua = pelangganBerhutang.reduce((acc, r) => acc + r.sisaHutang, 0);
+
+      if (document.getElementById('rekap-kasbon-pelanggan-count')) {
+        document.getElementById('rekap-kasbon-pelanggan-count').innerText = pelangganBerhutang.length + ' Pelanggan';
+      }
+      if (document.getElementById('rekap-kasbon-sisa-total')) {
+        document.getElementById('rekap-kasbon-sisa-total').innerText = formatRupiah(totalSisaSemua);
+      }
+
+      if (hanyaBelumLunas) {
+        rekapList = rekapList.filter(r => r.sisaHutang > 0);
+      }
+      if (searchNama) {
+        rekapList = rekapList.filter(r => r.pelanggan.toLowerCase().includes(searchNama));
+      }
+
+      if (rekapList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-5 text-slate-400">Tidak ada rekap piutang pelanggan pada filter ini</td></tr>`;
+        return;
+      }
+
+      rekapList.forEach((r, idx) => {
+        const safeNama = r.pelanggan.replace(/'/g, "\\'");
+        tbody.innerHTML += `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="py-3 px-4 font-semibold text-slate-500">${idx + 1}</td>
+            <td class="py-3 px-4 font-bold text-slate-900">${r.pelanggan}</td>
+            <td class="py-3 px-4 text-center">
+              <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-700">${r.jumlahNota} Nota</span>
+              ${r.notaBelumLunas > 0 ? `<span class="block text-[10px] text-rose-600 font-semibold mt-0.5">(${r.notaBelumLunas} belum lunas)</span>` : ''}
+            </td>
+            <td class="py-3 px-4 text-right font-semibold text-slate-700">${formatRupiah(r.totalKasbon)}</td>
+            <td class="py-3 px-4 text-right font-semibold text-emerald-600">${formatRupiah(r.sudahLunas)}</td>
+            <td class="py-3 px-4 text-right font-extrabold ${r.sisaHutang > 0 ? 'text-rose-600' : 'text-emerald-600'}">${formatRupiah(r.sisaHutang)}</td>
+            <td class="py-3 px-4 text-center">
+              ${r.sisaHutang > 0
+                ? `<button onclick="lunasiSemuaKasbonPelanggan('${safeNama}')" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[11px] font-bold shadow-sm">Lunasi Semua</button>`
+                : `<span class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold bg-emerald-100 text-emerald-700">Lunas</span>`}
+            </td>
+          </tr>`;
+      });
+    }
+
+    async function lunasiSemuaKasbonPelanggan(namaPelanggan) {
+      const filterBulan = document.getElementById('filter-bulan-kasbon')?.value || '';
+      const targetItems = (appData.kasbon || []).filter(k =>
+        k.status === 'Belum Lunas' &&
+        (k.pelanggan || 'Umum').trim().toLowerCase() === namaPelanggan.trim().toLowerCase() &&
+        (!filterBulan || (k.tanggal && k.tanggal.startsWith(filterBulan)))
+      );
+
+      if (targetItems.length === 0) return;
+      const totalHutang = targetItems.reduce((acc, k) => acc + (Number(k.hutang) || 0), 0);
+
+      if (!confirm(`Lunasi semua kasbon atas nama "${namaPelanggan}" (${targetItems.length} nota senilai ${formatRupiah(totalHutang)})?`)) return;
+
+      const now = new Date();
+      const timestampStr = now.toISOString().slice(0, 10) + ' ' + now.toTimeString().slice(0, 5);
+
+      for (let i = 0; i < targetItems.length; i++) {
+        const k = targetItems[i];
+        k.status = 'Lunas';
+        const newTrxId = 'TRX-' + (Date.now() + i).toString().slice(-6);
+        const modal = Number(k.modal) || 0;
+        const jual = Number(k.hutang) || 0;
+
+        appData.transaksi.unshift({
+          id: newTrxId,
+          timestamp: timestampStr,
+          kategori: k.kategori || 'Pelunasan Kasbon',
+          detail: k.detail || `Pelunasan Kasbon (${k.id})`,
+          qty: Number(k.qty) || 1,
+          modal, jual, untung: jual - modal,
+          status: 'Lunas',
+          pelanggan: k.pelanggan,
+          bayar: jual,
+          kembalian: 0
+        });
+
+        await syncKeGoogleSheets({
+          action: 'lunasiKasbon',
+          id: k.id,
+          trxId: newTrxId,
+          timestamp: timestampStr,
+          kategori: k.kategori || 'Pelunasan Kasbon',
+          detail: k.detail || `Pelunasan Kasbon (${k.id})`,
+          qty: Number(k.qty) || 1,
+          modal,
+          hutang: jual,
+          pelanggan: k.pelanggan
+        });
+      }
+
+      calculateDashboardMetrics();
+      saveData();
+      renderAllViews();
     }
 
     // ================= OPERASIONAL TOKO (TERPISAH + FILTER PERBULAN) =================
